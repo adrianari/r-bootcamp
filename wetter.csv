@@ -1,4 +1,4 @@
-timestamp_cet;air_temperature;water_temperature;wind_gust_max_10min;wind_speed_avg_10min;wind_force_avg_10min;wind_direction;windchill;barometric_pressure_qfe;precipitation;dew_point;global_radiation;humidity;water_level
+timestamp_cet;air_temperature;water_temperatur;wind_gust_max_10min;wind_speed_avg_10min;wind_force_avg_10min;wind_direction;windchill;barometric_pressure_qfe;precipitation;dew_point;global_radiation;humidity;water_level
 2019-01-01T00:00:00;5.7;6.6;3.6;2.3;2.3;102;3.8;984.4;0;4.4;0;92;405.86
 2019-01-01T00:00:00;5.7;6.6;3.6;2.3;2;102;3.8;984.4;0;4.4;0;92;405.86
 2019-01-01T00:10:00;5.6;6.6;2.5;1.4;1;66;5.5;984.4;0;4.3;0;91;405.86
