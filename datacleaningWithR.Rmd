@@ -7,6 +7,8 @@ output: html_document
 
 ```{r}
 library(dplyr)
+library(stringr)
+library(dplyr)
 
 ```
 
@@ -17,20 +19,19 @@ getwd()
 zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
 colnames(zaehlung)[1] <- "FK_ZAEHLER"
 
-
+##changing the FK_ZAEHLER to an indicator if bike or pedestrians are measured
 zaehlung$FK_ZAEHLER <- as.character(zaehlung$FK_ZAEHLER)
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104443"] <- "fussgaenger"
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104446"] <- "fussgaenger"
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "ECO09113499"] <- "velo"
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "ECO07091438"] <- "velo"
 zaehlung$FK_ZAEHLER <- as.factor(zaehlung$FK_ZAEHLER)
+zaehlung$FK_STANDORT <- as.factor(zaehlung$FK_STANDORT)
 
+zaehlung$DATUM <- str_sub(zaehlung$DATUM, end = -4)
 
-
-
-
+#getting the total of movements, independent from their direction
 zaehlung[is.na(zaehlung)] <- 0
-zaehlung[, "KATEGORIE"] <- "test"
 zaehlung[, "IN"] <- zaehlung[4]+zaehlung[6]
 zaehlung[, "OUT"] <- zaehlung[5] + zaehlung[7]
 zaehlung[, "UNIDIR"] <- zaehlung[4] + zaehlung [5] + zaehlung[6] +  zaehlung[7]
@@ -39,16 +40,19 @@ head(zaehlung)
 ```
 
 ```{r}
+wetter <- read.csv("wetter.csv", sep=";", header = TRUE)
+wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
 
-## selecting and filtering data ##
+wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -10)
+#aggregated_listWETTER <- aggregate(timestamp_cet ~ wind_force_avg_10min + air_temperature + precipitation, wetter, FUN = "mean")
 
-if (zaehlung[1] == 	"U15G3104446" | "U15G3104443"){
-  zaehlung[,"KATEGORIE"] == "fussgaenger"
-} else {zaehlung[,"KATEGORIE"] == "velo"}
+#aggregati <- aggregate(wetter$timestamp_cet)
+#aggregati
 
-  
-  
-  
+```
 
+
+```{r}
+aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
 
 ```
