@@ -8,7 +8,6 @@ output: html_document
 ```{r}
 library(dplyr)
 
-
 ```
 
 
@@ -17,7 +16,24 @@ getwd()
 
 zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
 colnames(zaehlung)[1] <- "FK_ZAEHLER"
-zaehlung[, "KATEGORIE"] <- 1
+
+
+zaehlung$FK_ZAEHLER <- as.character(zaehlung$FK_ZAEHLER)
+zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104443"] <- "fussgaenger"
+zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104446"] <- "fussgaenger"
+zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "ECO09113499"] <- "velo"
+zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "ECO07091438"] <- "velo"
+zaehlung$FK_ZAEHLER <- as.factor(zaehlung$FK_ZAEHLER)
+
+
+
+
+
+zaehlung[is.na(zaehlung)] <- 0
+zaehlung[, "KATEGORIE"] <- "test"
+zaehlung[, "IN"] <- zaehlung[4]+zaehlung[6]
+zaehlung[, "OUT"] <- zaehlung[5] + zaehlung[7]
+zaehlung[, "UNIDIR"] <- zaehlung[4] + zaehlung [5] + zaehlung[6] +  zaehlung[7]
 head(zaehlung)
 
 ```
@@ -25,12 +41,14 @@ head(zaehlung)
 ```{r}
 
 ## selecting and filtering data ##
-zaehlung %>% 
-  select(FK_ZAEHLER) == "U15G3104446" %>% 
-  zaehlung[, "KATEGORIE"] == "Fussgänger"
-head(zaehlung)
 
+if (zaehlung[1] == 	"U15G3104446" | "U15G3104443"){
+  zaehlung[,"KATEGORIE"] == "fussgaenger"
+} else {zaehlung[,"KATEGORIE"] == "velo"}
 
+  
+  
+  
 
 
 ```
