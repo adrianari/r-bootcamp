@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="095bf83e-7640-42b7-a250-f1b049e8c391" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/adding_cat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv" beforeDir="false" afterPath="$PROJECT_DIR$/2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adding_cat.py" beforeDir="false" afterPath="$PROJECT_DIR$/adding_cat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/verkehrszaehlung_after.csv" beforeDir="false" afterPath="$PROJECT_DIR$/verkehrszaehlung_after.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wetter.csv" beforeDir="false" afterPath="$PROJECT_DIR$/wetter.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +85,7 @@
       <option name="presentableId" value="Default" />
       <updated>1599726114271</updated>
       <workItem from="1599726123574" duration="4488000" />
+      <workItem from="1599737622757" duration="2855000" />
     </task>
     <servers />
   </component>
@@ -90,28 +93,36 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1143" height="365" key="GridCell.Tab.0.bottom" timestamp="1599732272563">
+    <state width="1142" height="365" key="GridCell.Tab.0.bottom" timestamp="1599738767996">
       <screen x="0" y="0" width="1500" height="960" />
     </state>
-    <state width="1143" height="365" key="GridCell.Tab.0.bottom/0.0.1500.960@0.0.1500.960" timestamp="1599732272563" />
-    <state width="1143" height="365" key="GridCell.Tab.0.center" timestamp="1599732272563">
+    <state width="1142" height="365" key="GridCell.Tab.0.bottom/0.0.1500.960@0.0.1500.960" timestamp="1599738767996" />
+    <state width="1142" height="365" key="GridCell.Tab.0.center" timestamp="1599738767996">
       <screen x="0" y="0" width="1500" height="960" />
     </state>
-    <state width="1143" height="365" key="GridCell.Tab.0.center/0.0.1500.960@0.0.1500.960" timestamp="1599732272563" />
-    <state width="1143" height="365" key="GridCell.Tab.0.left" timestamp="1599732272563">
+    <state width="1142" height="365" key="GridCell.Tab.0.center/0.0.1500.960@0.0.1500.960" timestamp="1599738767996" />
+    <state width="1142" height="365" key="GridCell.Tab.0.left" timestamp="1599738767995">
       <screen x="0" y="0" width="1500" height="960" />
     </state>
-    <state width="1143" height="365" key="GridCell.Tab.0.left/0.0.1500.960@0.0.1500.960" timestamp="1599732272563" />
-    <state width="1143" height="365" key="GridCell.Tab.0.right" timestamp="1599732272563">
+    <state width="1142" height="365" key="GridCell.Tab.0.left/0.0.1500.960@0.0.1500.960" timestamp="1599738767995" />
+    <state width="1142" height="365" key="GridCell.Tab.0.right" timestamp="1599738767996">
       <screen x="0" y="0" width="1500" height="960" />
     </state>
-    <state width="1143" height="365" key="GridCell.Tab.0.right/0.0.1500.960@0.0.1500.960" timestamp="1599732272563" />
+    <state width="1142" height="365" key="GridCell.Tab.0.right/0.0.1500.960@0.0.1500.960" timestamp="1599738767996" />
     <state x="254" y="126" key="SettingsEditor" timestamp="1599726195439">
       <screen x="0" y="0" width="1500" height="960" />
     </state>
     <state x="254" y="126" key="SettingsEditor/0.0.1500.960@0.0.1500.960" timestamp="1599726195439" />
+    <state x="458" y="309" key="com.intellij.ide.util.TipDialog" timestamp="1599737623928">
+      <screen x="0" y="0" width="1500" height="960" />
+    </state>
+    <state x="458" y="309" key="com.intellij.ide.util.TipDialog/0.0.1500.960@0.0.1500.960" timestamp="1599737623928" />
+    <state x="557" y="174" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1599738014368">
+      <screen x="0" y="0" width="1500" height="960" />
+    </state>
+    <state x="557" y="174" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1500.960@0.0.1500.960" timestamp="1599738014368" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/r_bootcamp$adding_cat.coverage" NAME="adding_cat Coverage Results" MODIFIED="1599732104502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/r_bootcamp$adding_cat.coverage" NAME="adding_cat Coverage Results" MODIFIED="1599738767970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

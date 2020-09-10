@@ -1,0 +1,36 @@
+---
+title: "Untitled"
+author: "Salome Isch, Adriana Ricklin"
+date: "10 9 2020"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+
+
+```
+
+
+```{r}
+getwd()
+
+zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
+colnames(zaehlung)[1] <- "FK_ZAEHLER"
+zaehlung[, "KATEGORIE"] <- 1
+head(zaehlung)
+
+```
+
+```{r}
+
+## selecting and filtering data ##
+zaehlung %>% 
+  select(FK_ZAEHLER) == "U15G3104446" %>% 
+  zaehlung[, "KATEGORIE"] == "Fussgänger"
+head(zaehlung)
+
+
+
+
+```
