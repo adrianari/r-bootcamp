@@ -41,10 +41,29 @@ head(zaehlung)
 
 ```{r}
 wetter <- read.csv("wetter.csv", sep=";", header = TRUE)
+<<<<<<< HEAD
 wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
 
 wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -10)
 #aggregated_listWETTER <- aggregate(timestamp_cet ~ wind_force_avg_10min + air_temperature + precipitation, wetter, FUN = "mean")
+
+=======
+#wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
+
+wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -7)
+#aggregated_listWETTER <- aggregate(timestamp_cet ~ wind_force_avg_10min + air_temperature + precipitation, wetter, FUN = "mean")
+
+apply(wetter, MARGIN = 2, FUN = anyNA)
+aggregated_Wind <- aggregate(wind_force_avg_10min ~ timestamp_cet, wetter, FUN = mean)
+aggregated_Temp <- aggregate(air_temperature ~ timestamp_cet, wetter, FUN = mean)
+aggregated_Prec <- aggregate(precipitation ~ timestamp_cet, wetter, sum)
+
+#aggregate <- wetter$aggregated_Wind, wetter$aggregated_Temp, wetter$aggregated_Prec
+
+aggregated_wetter_Wind_Temp <- left_join(aggregated_Wind, aggregated_Temp, by = "timestamp_cet")
+aggregated_wetter_Wind_Temp_Prec <- left_join(wetter_Wind_Temp, aggregated_Prec, by = "timestamp_cet")
+head(aggregated_wetter_Wind_Temp_Prec)
+#View(aggregated_wetter_Wind_Temp_Prec)
 
 #aggregati <- aggregate(wetter$timestamp_cet)
 #aggregati
@@ -56,3 +75,10 @@ wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -10)
 aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
 
 ```
+
+```{r}
+#joining both datasets
+join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec, by = c("DATUM" = "timestamp_cet"))
+View(join_zaehlung_wetter)
+```
+
