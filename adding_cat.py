@@ -18,4 +18,22 @@ df.loc[df['KATEGORIE'] == "fussgaenger", "OUT"] = df["FUSS_OUT"]
 #unidirection (movement regardless of the direction one goes)
 df["UNIDIR"] = df["IN"]+df["OUT"]
 
+morgen = ["05","06","07"]
+vormittag = ["08","09","10"]
+mittags = ["11","12","13"]
+nachmittags = ["14","15","16"]
+abends = ["17","18","19"]
+spaetabends = ["20","21","22"]
+nachts = ["23","24","00", "01"]
+spaetnachts = ["02","03", "04"]
+
+
+for line in df:
+    if line[2][11:13] in morgen:
+        df.loc[df['TAGESZEIT'] == "morgens"]
+
+        df.loc[df['KATEGORIE'] == "fussgaenger", "OUT"] = df["FUSS_OUT"]
+
+
+
 df.to_csv("verkehrszaehlung_after.csv", sep=";", index = False, header = True, encoding = "UTF-8")
