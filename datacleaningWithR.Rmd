@@ -41,13 +41,7 @@ head(zaehlung)
 
 ```{r}
 wetter <- read.csv("wetter.csv", sep=";", header = TRUE)
-<<<<<<< HEAD
-wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
 
-wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -10)
-#aggregated_listWETTER <- aggregate(timestamp_cet ~ wind_force_avg_10min + air_temperature + precipitation, wetter, FUN = "mean")
-
-=======
 #wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
 
 wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -7)
