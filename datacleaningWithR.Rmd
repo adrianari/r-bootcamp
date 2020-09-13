@@ -81,12 +81,19 @@ zaehlung[is.na(zaehlung)] <- 0
 zaehlung[, "IN"] <- zaehlung[4]+zaehlung[6]
 zaehlung[, "OUT"] <- zaehlung[5] + zaehlung[7]
 zaehlung[, "UNIDIR"] <- zaehlung[4] + zaehlung [5] + zaehlung[6] +  zaehlung[7]
-head(zaehlung)
 
+#
+zaehlung[, "TAGESZEIT"] <-str_sub(zaehlung$DATUM, 12)
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "06"] <- "morgen"
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "12"] <- "vormittag"
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "18"] <- "nachmittag"
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "24"] <- "abend"
+
+head(zaehlung)
 ```
 ```{r}
 #calculate the total of movements of pedestrians and bikers hourly
-aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
+aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + OST + NORD + FK_STANDORT + DATUM + TAGESZEIT, zaehlung, sum)
 
 ```
 
