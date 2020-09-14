@@ -2,14 +2,16 @@
 title: "Untitled"
 author: "Salome Isch, Adriana Ricklin"
 date: "10 9 2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 ### Content
 
 **1.   Dataset**    
 **1.1  Preparation of the datasets**    
 
-**2.   Models**   
+**2.   Graphical analysis**   
 **2.1    
 
 
@@ -93,7 +95,7 @@ head(zaehlung)
 ```
 ```{r}
 #calculate the total of movements of pedestrians and bikers hourly
-aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + OST + NORD + FK_STANDORT + DATUM + TAGESZEIT, zaehlung, sum)
+aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + TAGESZEIT + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
 
 ```
 
@@ -137,3 +139,42 @@ join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp
 head(join_zaehlung_wetter)
 ```
 
+### 2. Graphical Analysis
+##### **2.2 Scatterplot**
+```{r}
+plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+     pch = 8,
+     col = "darkblue",
+     cex = 0.5, 
+     main = "Does temperature make a different to the count of bikers and pedestrians?",
+     ylab = "Total count of ped. + bikers",
+     xlab = "Air temperature")
+#abline
+#plot(aggregated_wetter_Wind_Temp_Prec_Hum$air_temperature, aggregated_wetter_Wind_Temp_Prec_Hum$UNIDIR, main = "...")
+```
+
+Interpretation: 
+
+```{r}
+plot(UNIDIR ~ humidity, data = join_zaehlung_wetter,
+     pch = 8,
+     col = "darkblue",
+     cex = 0.5, 
+     main = "Does humidity make a different to the count of bikers and pedestrians?", 
+     ylab = "Total count of ped. + bikers",
+     xlab = " Humidity in ??")
+```
+
+Interpretation:
+
+```{r}
+plot(UNIDIR ~ precipitation, data = join_zaehlung_wetter,
+     pch = 8,
+     col = "darkblue",
+     cex = 0.5, 
+     main = "Does precipitation make a different to the count of bikers and pedestrians?",
+     ylab = "Total count of ped. + bikers",
+     xlab = "Precipitation in ml")
+```
+
+Interpretation:
