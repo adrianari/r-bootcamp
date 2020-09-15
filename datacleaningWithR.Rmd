@@ -142,6 +142,7 @@ head(join_zaehlung_wetter)
 ### 2. Graphical Analysis
 ##### **2.2 Scatterplot**
 ```{r}
+#air temperature
 plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
      pch = 8,
      col = "darkblue",
@@ -156,6 +157,55 @@ plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
 Interpretation: 
 
 ```{r}
+## {ggplot2} ##
+library(ggplot2)
+par(mfrow = c(2, 2))
+qplot(y = UNIDIR, x = air_temperature, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
+qplot(y = UNIDIR, x = air_temperature, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
+```
+
+```{r}
+#xyplot(UNIDIR ~ air_temperature, groups = TAGESZEIT, data = join_zaehlung_wetter)
+```
+
+```{r}
+ggplot(data = join_zaehlung_wetter,
+       mapping = aes(y = UNIDIR,   #aes us easthetics
+                     x = air_temperature,
+                     colour = TAGESZEIT)) +
+  geom_point()
+
+```
+
+```{r}
+ggplot(data = join_zaehlung_wetter,
+       mapping = aes(y = UNIDIR,   #aes us easthetics
+                     x = air_temperature,
+                     colour = TAGESZEIT)) +
+  geom_line()
+```
+
+```{r}
+ggplot(data = join_zaehlung_wetter,
+       mapping = aes(y = UNIDIR,   #aes us easthetics
+                     x = air_temperature,
+                     group = TAGESZEIT)) +
+  geom_line()
+```
+
+```{r}
+ggplot(data = join_zaehlung_wetter,
+       mapping = aes(y = UNIDIR,   #aes us easthetics
+                     x = air_temperature)) +
+                     
+  geom_point() +
+  geom_smooth()
+```
+
+
+
+```{r}
+#humidity
 plot(UNIDIR ~ humidity, data = join_zaehlung_wetter,
      pch = 8,
      col = "darkblue",
@@ -168,6 +218,13 @@ plot(UNIDIR ~ humidity, data = join_zaehlung_wetter,
 Interpretation:
 
 ```{r}
+par(mfrow = c(2, 2))
+qplot(y = UNIDIR, x = humidity, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
+qplot(y = UNIDIR, x = humidity, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
+```
+
+```{r}
+#precipitation
 plot(UNIDIR ~ precipitation, data = join_zaehlung_wetter,
      pch = 8,
      col = "darkblue",
@@ -178,3 +235,8 @@ plot(UNIDIR ~ precipitation, data = join_zaehlung_wetter,
 ```
 
 Interpretation:
+
+```{r}
+qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
+qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
+```
