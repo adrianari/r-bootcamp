@@ -90,9 +90,11 @@ zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "06"] <- "morgen"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "12"] <- "vormittag"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "18"] <- "nachmittag"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "24"] <- "abend"
+zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 
 head(zaehlung)
 ```
+
 ```{r}
 #calculate the total of movements of pedestrians and bikers hourly
 aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + TAGESZEIT + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
@@ -109,6 +111,7 @@ aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + TAGESZEIT + OST + NORD + FK
 wetter$timestamp_cet <- str_sub(wetter$timestamp_cet, end = -7)
 
 ```
+
 ```{r}
 #calculate the mean of wind force, air temperature and humidity per hour, and the sum of precipitation per hour
 
@@ -127,8 +130,8 @@ aggregated_wetter_Wind_Temp_Prec_Hum <- left_join(aggregated_wetter_Wind_Temp_Pr
 head(aggregated_wetter_Wind_Temp_Prec_Hum)
 #View(aggregated_wetter_Wind_Temp_Prec)
 
-#aggregati <- aggregate(wetter$timestamp_cet)
-#aggregati
+#old test code: aggregati <- aggregate(wetter$timestamp_cet)
+#old test code: aggregati
 
 ```
 
@@ -147,9 +150,10 @@ plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
      pch = 8,
      col = "darkblue",
      cex = 0.5, 
-     main = "Does temperature make a different to the count of bikers and pedestrians?",
+     main = "Does temperature make a difference to the count of bikers and pedestrians?",
      ylab = "Total count of ped. + bikers",
-     xlab = "Air temperature")
+     xlab = "Air temperature",
+     xlim = c(0,30))
 #abline
 #plot(aggregated_wetter_Wind_Temp_Prec_Hum$air_temperature, aggregated_wetter_Wind_Temp_Prec_Hum$UNIDIR, main = "...")
 ```
