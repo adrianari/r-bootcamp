@@ -35,21 +35,25 @@ NORD       coordinate according to CH1903+ / LV95
 Dataset: wetter  
 ***
 
-### 1. Dataset
 
+First, the required libraries are set up:
 ```{r}
 # 1.1.1 Libraries
 library(dplyr)
 library(stringr)
 library(dplyr)
+library(ggplot2)
+library(lattice)
 
 ```
 
-
+We further check if we are in the correct working directory:
 ```{r}
 #get working directory
 getwd()
 ```
+
+### 1. Dataset
 ```{r}
 #read in data
 zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
@@ -63,6 +67,14 @@ wetter <- read.csv("wetter.csv", sep=";", header = TRUE)
 str(zaehlung)
 head(zaehlung)
 ```
+
+The head of our dataset indicates that the traffic counters did not work for both pedestrians and bikers but only specifically for one of each. We thus categorize the counting stations accordingly and summarize the data into one shared column.
+
+As the traffic counters further made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
+
+Third, we categorize the hour indications into categories of the same length (6 hour indications per factor) "morgen", "vormittag", "nachmittag" and "abend". 
+
+
 ##### **1.1 Preparation of the datasets**
 ```{r}
 #1.1.1 Prepare dataset pedestrians and bikers
@@ -94,6 +106,8 @@ zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 
 head(zaehlung)
 ```
+
+
 
 ```{r}
 #calculate the total of movements of pedestrians and bikers hourly
@@ -146,14 +160,15 @@ head(join_zaehlung_wetter)
 ##### **2.2 Scatterplot**
 ```{r}
 #air temperature
-plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     pch = 8,
-     col = "darkblue",
-     cex = 0.5, 
-     main = "Does temperature make a difference to the count of bikers and pedestrians?",
-     ylab = "Total count of ped. + bikers",
-     xlab = "Air temperature",
-     xlim = c(0,30))
+ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") 
+
+     # pch = 8,
+     # col = "darkblue",
+     # cex = 0.5, 
+     # main = ,
+     # ylab = 
+     # xlab = ,
+     # xlim = c(0,30)
 #abline
 #plot(aggregated_wetter_Wind_Temp_Prec_Hum$air_temperature, aggregated_wetter_Wind_Temp_Prec_Hum$UNIDIR, main = "...")
 ```
@@ -161,15 +176,33 @@ plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
 Interpretation: 
 
 ```{r}
-## {ggplot2} ##
-library(ggplot2)
-par(mfrow = c(2, 2))
-qplot(y = UNIDIR, x = air_temperature, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
-qplot(y = UNIDIR, x = air_temperature, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
+ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") + ylim(c(0,250))           
 ```
 
 ```{r}
-#xyplot(UNIDIR ~ air_temperature, groups = TAGESZEIT, data = join_zaehlung_wetter)
+histogram(~ air_temperature, data=join_zaehlung_wetter, xlab = "Air temperatur [°C]", main="Distribution of air temperature", breaks = 20)
+```
+
+```{r}
+histogram(~ join_zaehlung_wetter$UNIDIR, xlim = c(0,250), breaks = 250, xlab = "Counted number of pedestrians & bikers per hour", labels = TRUE)
+
+
+```
+
+
+
+```{r}
+## {ggplot2} ##
+par(mfrow = c(2, 2))
+qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT, ylim = c(0,250),alpha=I(0.05))
+```
+
+```{r}
+qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER, ylim = c(0,250), alpha=I(0.05))
+```
+
+```{r}
+xyplot(UNIDIR ~ air_temperature, groups = TAGESZEIT, data = join_zaehlung_wetter)
 ```
 
 ```{r}
