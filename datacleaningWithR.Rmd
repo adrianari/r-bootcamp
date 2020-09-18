@@ -154,6 +154,25 @@ head(aggregated_wetter_Wind_Temp_Prec_Hum)
 #1.1.3 joining both datasets together
 join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec_Hum, by = c("DATUM" = "timestamp_cet"))
 head(join_zaehlung_wetter)
+
+join_zaehlung_wetter$month <- str_sub(join_zaehlung_wetter$DATUM, end = -7)
+join_zaehlung_wetter$month <- as.character(join_zaehlung_wetter$month)
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-01"] <- "Januar"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-02"] <- "Februar"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-03"] <- "März"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-04"] <- "April"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-05"] <- "Mai"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-06"] <- "Juni"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-07"] <- "July"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-08"] <- "August"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-09"] <- "September"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-10"] <- "Oktober"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-11"] <- "November"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-12"] <- "Dezember"
+join_zaehlung_wetter$month <- as.factor(join_zaehlung_wetter$month)
+
+head(join_zaehlung_wetter)
+
 ```
 
 ### 2. Graphical Analysis
@@ -277,3 +296,15 @@ Interpretation:
 qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
 qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
 ```
+
+
+
+
+
+
+
+
+
+
+
+Discussion: very reliant on the quality of the data. (We do not know exactly how the counting stations worked)
