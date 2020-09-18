@@ -158,19 +158,22 @@ head(join_zaehlung_wetter)
 
 ```{r}
 join_zaehlung_wetter$month <- str_sub(join_zaehlung_wetter$DATUM, end = -7)
+head(join_zaehlung_wetter)
+```
+```{r}
 join_zaehlung_wetter$month <- as.character(join_zaehlung_wetter$month)
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-01"] <- "01" #"Januar"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-02"] <- "02" #"Februar"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-03"] <- "03" #"März"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-04"] <- "04" #"April"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-05"] <- "05" #"Mai"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-06"] <- "06" #"Juni"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-07"] <- "07" #"July"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-08"] <- "08" #"August"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-09"] <- "09" #"September"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-10"] <- "10" #"Oktober"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-11"] <- "11" #"November"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-12"] <- "12" #"Dezember"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-01"] <- "Januar"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-02"] <- "Februar"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-03"] <- "März"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-04"] <- "April"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-05"] <- "Mai"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-06"] <- "Juni"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-07"] <- "Juli"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-08"] <- "August"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-09"] <- "September"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-10"] <- "Oktober"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-11"] <- "November"
+join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-12"] <- "Dezember"
 join_zaehlung_wetter$month <- as.factor(join_zaehlung_wetter$month)
 
 head(join_zaehlung_wetter)
