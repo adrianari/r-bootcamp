@@ -98,7 +98,7 @@ str(zaehlung)
 head(zaehlung)
 ```
 
-. We thus categorize the counting stations accordingly and summarize the data into one shared column.
+We thus categorize the counting stations accordingly and summarize the data into one shared column.
 
 As the traffic counters further made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
 
