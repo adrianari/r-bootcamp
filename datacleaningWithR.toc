@@ -1,0 +1,6 @@
+\contentsline {section}{\numberline {1}Scope of this paper}{1}{section.1}%
+\contentsline {section}{\numberline {2}Libraries}{2}{section.2}%
+\contentsline {section}{\numberline {3}Data Import / Data Cleaning}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Preparation of the datasets}{4}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}2. Graphical Analysis}{6}{subsubsection.3.1.1}%
+\contentsline {subparagraph}{\numberline {3.1.1.0.1}\textbf {2.2 Scatterplot}}{6}{subparagraph.3.1.1.0.1}%

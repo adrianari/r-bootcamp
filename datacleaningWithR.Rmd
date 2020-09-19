@@ -18,37 +18,46 @@ knitr::opts_chunk$set(cache = TRUE)
 ```
 
 
-The following paper looks at the influence of the weather on the number of pedestrians and bikers in Zurich. More specifically, the focus lies on the place of Mythenquai. Mythenquai has been chosen ouf of the reason that both weather measurements as well as data regarding the number of pedestrians / bikers are 
+#Introduction
+## Scope of this paper
 
-For this, two different data sets
+The following paper looks at the influence of the weather on the number of pedestrians and bikers in Zurich. More specifically, the focus lies on the place of Mythenquai. Mythenquai has been chosen ouf of the reason that both weather measurements as well as data regarding the number of pedestrians / bikers are collected at this very place. This means that there is as little discrepancy between the datasets as possible.
+
+Mythenquai is located as follows:
+
+```{r pressure, fig.cap="Screenshot retrieved from https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen", out.width = '90%'}
+knitr::include_graphics("Mythenquai.jpg")
+```
 
 
-*Datasets*
-**Dataset 1**
-2019_verkehrszaehlungen_werte_fussgaenger_velo
-This document shows the quarter hourly count of pedestrians and bikers passing at different counting stations. Source: https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/33b3e7d3-f662-43e8-b018-e4b1a254f1f4?inner_span=True
 
-**Columns**    
-FK_ZAEHLER 2 levels, pedestrians or bikers
-FK_STANDORT5 stations
-DATUM      data quarter hourly
-VELO_IN    number of bikers, direction in
-VELO_OUT   number of bikers, direction out
-FUSS_IN    number of pedestrians, direction in
-FUSS_OUT   number of pedestrians, direction out
-OST        coordinate according to CH1903+ / LV95
-NORD       coordinate according to CH1903+ / LV95
+##Datasets  
+**Dataset 1**: 2019_verkehrszaehlungen_werte_fussgaenger_velo.csv 
+This document shows the quarter hourly count of pedestrians and bikers passing at different counting stations.  
+
+*Source*: [https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/33b3e7d3-f662-43e8-b018-e4b1a254f1f4?inner_span=True](https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/33b3e7d3-f662-43e8-b018-e4b1a254f1f4?inner_span=True)
+
+*Columns*  
+FK_ZAEHLER 2 levels, pedestrians or bikers  
+FK_STANDORT5 stations  
+DATUM      data quarter hourly  
+VELO_IN    number of bikers, direction in  
+VELO_OUT   number of bikers, direction out  
+FUSS_IN    number of pedestrians, direction in  
+FUSS_OUT   number of pedestrians, direction out  
+OST        coordinate according to CH1903+ / LV95  
+NORD       coordinate according to CH1903+ / LV95  
 
   
-**Dataset 2**
-wetter  
-***
+**Dataset 2**: messwerte_mythenquai_2007-2019.csv
+This document shows various variables (air temperature, precipitation, ...) for Mythenquai.  
 
-# Packages
+*Source*: [https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv](https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv)
 
-First, the required libraries are set up:
+
+
+# Libraries
 ```{r}
-# 1.1.1 Libraries
 library(dplyr)
 library(stringr)
 library(dplyr)
@@ -57,11 +66,7 @@ library(lattice)
 
 ```
 
-We further check if we are in the correct working directory:
-```{r}
-#get working directory
-getwd()
-```
+
 
 # Data Import / Data Cleaning
 ```{r}
@@ -345,4 +350,4 @@ qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zae
 
 
 
-Discussion: very reliant on the quality of the data. (We do not know exactly how the counting stations worked)
+Discussion: very reliant on the quality of the data. (We do not know exactly how the counting stations worked). Correction factors for the analysed time span is not available yet
