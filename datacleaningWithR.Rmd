@@ -1,21 +1,27 @@
 ---
-title: "Untitled"
+title: "R Bootcamp Group Work"
 author: "Salome Isch, Adriana Ricklin"
-date: "10 9 2020"
-output:
-  pdf_document: default
-  html_document: default
+date: "10.9.2020"
+output: 
+  pdf_document:
+    number_sections: yes
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_float: yes
 ---
-### Content
 
-**1.   Dataset**    
-**1.1  Preparation of the datasets**    
-
-**2.   Graphical analysis**   
-**2.1    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+```
 
 
-***  
+The following paper looks at the influence of the weather on the number of pedestrians and bikers. 
+
+Fo
+
 
 Dataset: 2019_verkehrszaehlungen_werte_fussgaenger_velo
 This document shows the quarter hourly count of pedestrians and bikers passing at different counting stations. Source: https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/33b3e7d3-f662-43e8-b018-e4b1a254f1f4?inner_span=True
@@ -35,6 +41,7 @@ NORD       coordinate according to CH1903+ / LV95
 Dataset: wetter  
 ***
 
+# Packages
 
 First, the required libraries are set up:
 ```{r}
@@ -53,7 +60,7 @@ We further check if we are in the correct working directory:
 getwd()
 ```
 
-### 1. Dataset
+# Data Import / Data Cleaning
 ```{r}
 #read in data
 zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
@@ -75,7 +82,7 @@ As the traffic counters further made a difference whether one went from directio
 Third, we categorize the hour indications into categories of the same length (6 hour indications per factor) "morgen", "vormittag", "nachmittag" and "abend". 
 
 
-##### **1.1 Preparation of the datasets**
+## Preparation of the datasets
 ```{r}
 #1.1.1 Prepare dataset pedestrians and bikers
 ##changing the FK_ZAEHLER to an indicator if bike or pedestrians are measured
