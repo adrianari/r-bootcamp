@@ -79,10 +79,9 @@ library(lattice)
 # Data Import / Data Cleaning
 ```{r}
 #read in data
-zaehlung_alles <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
-colnames(zaehlung_alles)[1] <- "FK_ZAEHLER"
-zaehlung <- subset(zaehlung_alles, FK_ZAEHLER)
-?dplyr::filter
+zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
+colnames(zaehlung)[1] <- "FK_ZAEHLER"
+
 
 #structure of the dataset
 str(zaehlung)
