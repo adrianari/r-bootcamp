@@ -23,9 +23,9 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ## Scope of this paper
 
-The following paper looks at the influence of the weather on the number of pedestrians and bikers in Zurich. More specifically, the focus lies on the place of Mythenquai. Mythenquai has been chosen ouf of the reason that both weather measurements as well as data regarding the number of pedestrians / bikers are collected at this very place. This means that there is as little discrepancy between the datasets as possible.
+The following paper looks at the influence of the weather on the number of pedestrians and bikers in Zurich for 2019. More specifically, the focus lies on the place of Mythenquai. Mythenquai has been chosen ouf of the reason that both weather measurements as well as data regarding the number of pedestrians / bikers are collected at this very place. This means that there is as little discrepancy between the datasets as possible.
 
-Mythenquai is located as follows:
+Mythenquai is a section of road, directly next to Lake Zurich. The counting station for pedestrians and bikers is represented by the black pint in the middle of below red line:
 
 ```{r pressure, echo = FALSE, fig.cap="Screenshot retrieved from https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen", out.width = '90%'}
 knitr::include_graphics("Mythenquai.jpg")
@@ -51,13 +51,17 @@ FUSS_OUT   number of pedestrians, direction out
 OST        coordinate according to CH1903+ / LV95  
 NORD       coordinate according to CH1903+ / LV95  
   
-  
+For computational reasons (as we experienced difficulties is the course of working on this paper as there are 9 variables with 1264678 observations in the original dataset), a preselection has been done for this data set in Excel. The altered dataset is named ""2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv". We selected the rows that have one of the following values in the first row: "ECO09113499", "U15G3104443" or "ECO07091438".
+
+Those are the keys for the counting station at Mythenquai according to the classification file retrieved from [https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen](https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen).
+
     
 **Dataset 2**: messwerte_mythenquai_2007-2019.csv  
-This document shows various variables (air temperature, precipitation, ...) for Mythenquai. Data are collected by the Wasserpolizei Zürich.  
+This document shows various variables (air temperature, precipitation, ...) for Mythenquai. Data are collected by the Wasserschutzpolizei Zürich.  
 
 *Source*: [https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv](https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv)
 
+Again, for computational reasons, a preselection in Excel has been done for this data set as well. Chosen were all data points that were available from the year 2019. Those data points were stored in the following file: wetter.csv.
 
 
 # Libraries
@@ -75,8 +79,11 @@ library(lattice)
 # Data Import / Data Cleaning
 ```{r}
 #read in data
-zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
-colnames(zaehlung)[1] <- "FK_ZAEHLER"
+zaehlung_alles <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
+colnames(zaehlung_alles)[1] <- "FK_ZAEHLER"
+zaehlung <- subset(zaehlung_alles, FK_ZAEHLER)
+?dplyr::filter
+
 #structure of the dataset
 str(zaehlung)
 head(zaehlung)
@@ -354,4 +361,4 @@ qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zae
 
 
 
-Discussion: very reliant on the quality of the data. (We do not know exactly how the counting stations worked). Correction factors for the analysed time span is not available yet
+Discussion: very reliant on the quality of the data. (We do not know exactly how the counting stations worked --> ). Correction factors for the analysed time span is not available yet. 
