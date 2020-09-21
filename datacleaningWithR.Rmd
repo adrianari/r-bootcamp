@@ -13,6 +13,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(formatR)
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache = TRUE)
 knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
@@ -108,7 +109,7 @@ Third, we categorize the hour indications into categories of the same length (6 
 
 ## Preparation of the datasets
 
-###Prepare dataset pedestrians and bikers
+### Prepare dataset pedestrians and bikers
 ```{r}
 
 ##changing the FK_ZAEHLER to an indicator if bike or pedestrians are measured
@@ -147,7 +148,7 @@ zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + TAGESZEIT + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
 
 ```
-### Prepare dataset Weather
+### Prepare dataset weather
 ```{r}
 
 #wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
@@ -181,7 +182,7 @@ aggregated_wetter_Wind_Temp_Prec_Hum <- left_join(aggregated_wetter_Wind_Temp_Pr
 
 ```
 
-###Joining both datasets together
+### Joining both datasets together
 ```{r}
 join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec_Hum, by = c("DATUM" = "timestamp_cet"))
 #head(join_zaehlung_wetter)
@@ -275,7 +276,7 @@ join_zaehlung_wetter %>%
   ggplot(aes(air_temperature, UNIDIR, colour = factor(TAGESZEIT))) +
     labs(title = "Bikers and pedestrians by time of day", x = "Air temperature") +
     geom_point(alpha=I(0.05)) +
-    facet_grid(TAGESZEIT ~ .) +
+    facet_grid(TAGESZEIT  ~ .) +
     scale_y_continuous(limits=c(0,250))
 ```
 
