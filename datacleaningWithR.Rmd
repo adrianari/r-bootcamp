@@ -64,7 +64,6 @@ This document shows various variables (air temperature, precipitation, ...) for 
 
 Again, for computational reasons, a preselection in Excel has been done for this data set as well. Chosen were all data points that were available from the year 2019. Those data points were stored in the following file: wetter.csv.
 
-
 # Libraries
 ```{r}
 library(dplyr)
@@ -108,8 +107,10 @@ Third, we categorize the hour indications into categories of the same length (6 
 
 
 ## Preparation of the datasets
+
+###Prepare dataset pedestrians and bikers
 ```{r}
-#1.1.1 Prepare dataset pedestrians and bikers
+
 ##changing the FK_ZAEHLER to an indicator if bike or pedestrians are measured
 zaehlung$FK_ZAEHLER <- as.character(zaehlung$FK_ZAEHLER)
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104443"] <- "fussgaenger"
@@ -146,9 +147,8 @@ zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + TAGESZEIT + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
 
 ```
-
+### Prepare dataset Weather
 ```{r}
-#1.1.2 Prepare dataset Weather
 
 #wetter$wind_force_avg_10min <- as.factor(wetter$wind_force_avg_10min)
 #apply(wetter, MARGIN = 2, FUN = anyNA)
@@ -181,9 +181,8 @@ aggregated_wetter_Wind_Temp_Prec_Hum <- left_join(aggregated_wetter_Wind_Temp_Pr
 
 ```
 
-
+###Joining both datasets together
 ```{r}
-#1.1.3 joining both datasets together
 join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec_Hum, by = c("DATUM" = "timestamp_cet"))
 #head(join_zaehlung_wetter)
 ```
@@ -211,6 +210,7 @@ join_zaehlung_wetter$month <- as.factor(join_zaehlung_wetter$month)
 head(join_zaehlung_wetter)
 
 ```
+# Research question
 
 # Graphical Analysis
 
@@ -273,6 +273,7 @@ join_zaehlung_wetter %>%
   arrange(UNIDIR) %>%
   mutate(TAGESZEIT = factor(TAGESZEIT, levels=c("morgen", "vormittag", "nachmittag", "abend"))) %>%
   ggplot(aes(air_temperature, UNIDIR, colour = factor(TAGESZEIT))) +
+    labs(title = "Bikers and pedestrians by time of day", x = "Air temperature") +
     geom_point(alpha=I(0.05)) +
     facet_grid(TAGESZEIT ~ .) +
     scale_y_continuous(limits=c(0,250))

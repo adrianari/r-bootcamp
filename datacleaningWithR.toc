@@ -5,5 +5,7 @@
 \contentsline {section}{\numberline {3}Data Import / Data Cleaning}{3}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Import of the datasets}{3}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Preparation of the datasets}{5}{subsection.3.2}%
-\contentsline {section}{\numberline {4}Graphical Analysis}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Scatterplot}{7}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {3.2.1}Prepare dataset Weather}{6}{subsubsection.3.2.1}%
+\contentsline {section}{\numberline {4}Research question}{7}{section.4}%
+\contentsline {section}{\numberline {5}Graphical Analysis}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Scatterplot}{7}{subsection.5.1}%
