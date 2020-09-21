@@ -3,3 +3,4 @@ dplyr
 stringr
 ggplot2
 lattice
+knitr

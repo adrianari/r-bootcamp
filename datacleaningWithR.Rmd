@@ -15,6 +15,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache = TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 ```
 
 
@@ -77,6 +78,7 @@ library(lattice)
 
 
 # Data Import / Data Cleaning
+## Import of the datasets
 ```{r}
 #read in data
 zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
@@ -94,13 +96,13 @@ The head of our dataset indicates that the traffic counters did not work for bot
 ```{r}
 wetter <- read.csv("wetter.csv", sep=";", header = TRUE)
 #structure of the dataset
-str(zaehlung)
-head(zaehlung)
+str(wetter)
+head(wetter)
 ```
 
 We thus categorize the counting stations accordingly and summarize the data into one shared column.
 
-As the traffic counters further made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
+As the traffic counters made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
 
 Third, we categorize the hour indications into categories of the same length (6 hour indications per factor) "morgen", "vormittag", "nachmittag" and "abend". 
 
@@ -126,7 +128,7 @@ zaehlung[, "IN"] <- zaehlung[4]+zaehlung[6]
 zaehlung[, "OUT"] <- zaehlung[5] + zaehlung[7]
 zaehlung[, "UNIDIR"] <- zaehlung[4] + zaehlung [5] + zaehlung[6] +  zaehlung[7]
 
-#
+# new categorie for the time of day in intervals of 6 hours
 zaehlung[, "TAGESZEIT"] <-str_sub(zaehlung$DATUM, 12)
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "06"] <- "morgen"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "12"] <- "vormittag"
@@ -134,7 +136,7 @@ zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "18"] <- "nachmittag"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "24"] <- "abend"
 zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 
-head(zaehlung)
+#head(zaehlung)
 ```
 
 
@@ -171,7 +173,7 @@ aggregated_Hum <- aggregate(humidity ~ timestamp_cet, wetter, FUN = mean)
 aggregated_wetter_Wind_Temp <- left_join(aggregated_Wind, aggregated_Temp, by = "timestamp_cet")
 aggregated_wetter_Wind_Temp_Prec <- left_join(aggregated_wetter_Wind_Temp, aggregated_Prec, by = "timestamp_cet")
 aggregated_wetter_Wind_Temp_Prec_Hum <- left_join(aggregated_wetter_Wind_Temp_Prec, aggregated_Hum, by = "timestamp_cet")
-head(aggregated_wetter_Wind_Temp_Prec_Hum)
+#head(aggregated_wetter_Wind_Temp_Prec_Hum)
 #View(aggregated_wetter_Wind_Temp_Prec)
 
 #old test code: aggregati <- aggregate(wetter$timestamp_cet)
@@ -183,12 +185,12 @@ head(aggregated_wetter_Wind_Temp_Prec_Hum)
 ```{r}
 #1.1.3 joining both datasets together
 join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec_Hum, by = c("DATUM" = "timestamp_cet"))
-head(join_zaehlung_wetter)
+#head(join_zaehlung_wetter)
 ```
 
 ```{r}
 join_zaehlung_wetter$month <- str_sub(join_zaehlung_wetter$DATUM, end = -7)
-head(join_zaehlung_wetter)
+#head(join_zaehlung_wetter)
 ```
 ```{r}
 join_zaehlung_wetter$month <- as.character(join_zaehlung_wetter$month)
@@ -210,8 +212,9 @@ head(join_zaehlung_wetter)
 
 ```
 
-### 2. Graphical Analysis
-##### **2.2 Scatterplot**
+# Graphical Analysis
+
+## Scatterplot
 ```{r}
 #air temperature
 ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") 
@@ -265,13 +268,22 @@ histogram(~ join_zaehlung_wetter$UNIDIR_log, main = "Distribution of the unidire
 par(mfrow = c(2, 2))
 qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT, ylim = c(0,250),alpha=I(0.05))
 ```
+```{r}
+join_zaehlung_wetter %>%
+  arrange(UNIDIR) %>%
+  mutate(TAGESZEIT = factor(TAGESZEIT, levels=c("morgen", "vormittag", "nachmittag", "abend"))) %>%
+  ggplot(aes(air_temperature, UNIDIR, colour = factor(TAGESZEIT))) +
+    geom_point(alpha=I(0.05)) +
+    facet_grid(TAGESZEIT ~ .) +
+    scale_y_continuous(limits=c(0,250))
+```
 
 ```{r}
 qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER, ylim = c(0,250), alpha=I(0.05))
 ```
 
 ```{r}
-xyplot(UNIDIR ~ air_temperature, groups = TAGESZEIT, data = join_zaehlung_wetter)
+# xyplot(UNIDIR ~ air_temperature, groups = TAGESZEIT, data = join_zaehlung_wetter)
 ```
 
 ```{r}
@@ -284,19 +296,19 @@ ggplot(data = join_zaehlung_wetter,
 ```
 
 ```{r}
-ggplot(data = join_zaehlung_wetter,
-       mapping = aes(y = UNIDIR,   #aes us easthetics
-                     x = air_temperature,
-                     colour = TAGESZEIT)) +
-  geom_line()
+# ggplot(data = join_zaehlung_wetter,
+#        mapping = aes(y = UNIDIR,   #aes us easthetics
+#                      x = air_temperature,
+#                      colour = TAGESZEIT)) +
+#   geom_line()
 ```
 
 ```{r}
-ggplot(data = join_zaehlung_wetter,
-       mapping = aes(y = UNIDIR,   #aes us easthetics
-                     x = air_temperature,
-                     group = TAGESZEIT)) +
-  geom_line()
+# ggplot(data = join_zaehlung_wetter,
+#        mapping = aes(y = UNIDIR,   #aes us easthetics
+#                      x = air_temperature,
+#                      group = TAGESZEIT)) +
+#   geom_line()
 ```
 
 ```{r}
@@ -311,40 +323,40 @@ ggplot(data = join_zaehlung_wetter,
 
 
 ```{r}
-#humidity
-plot(UNIDIR ~ humidity, data = join_zaehlung_wetter,
-     pch = 8,
-     col = "darkblue",
-     cex = 0.5, 
-     main = "Does humidity make a different to the count of bikers and pedestrians?", 
-     ylab = "Total count of ped. + bikers",
-     xlab = " Humidity in ??")
+# #humidity
+# plot(UNIDIR ~ humidity, data = join_zaehlung_wetter,
+#      pch = 8,
+#      col = "darkblue",
+#      cex = 0.5, 
+#      main = "Does humidity make a different to the count of bikers and pedestrians?", 
+#      ylab = "Total count of ped. + bikers",
+#      xlab = " Humidity in ??")
 ```
 
 Interpretation:
 
 ```{r}
-par(mfrow = c(2, 2))
-qplot(y = UNIDIR, x = humidity, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
-qplot(y = UNIDIR, x = humidity, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
+# par(mfrow = c(2, 2))
+# qplot(y = UNIDIR, x = humidity, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
+# qplot(y = UNIDIR, x = humidity, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
 ```
 
 ```{r}
-#precipitation
-plot(UNIDIR ~ precipitation, data = join_zaehlung_wetter,
-     pch = 8,
-     col = "darkblue",
-     cex = 0.5, 
-     main = "Does precipitation make a different to the count of bikers and pedestrians?",
-     ylab = "Total count of ped. + bikers",
-     xlab = "Precipitation in ml")
+# #precipitation
+# plot(UNIDIR ~ precipitation, data = join_zaehlung_wetter,
+#      pch = 8,
+#      col = "darkblue",
+#      cex = 0.5, 
+#      main = "Does precipitation make a different to the count of bikers and pedestrians?",
+#      ylab = "Total count of ped. + bikers",
+#      xlab = "Precipitation in ml")
 ```
 
 Interpretation:
 
 ```{r}
-qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
-qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
+# qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT)
+# qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER)
 ```
 
 
@@ -352,7 +364,17 @@ qplot(y = UNIDIR, x = precipitation, data = join_zaehlung_wetter, facets = ~ FK_
 
 qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ month, col = month,alpha=I(0.05))
 ```
+```{r}
+join_zaehlung_wetter %>%
+  arrange(UNIDIR) %>%
+  mutate(month = factor(month, levels=c("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober",       "November", "Dezember"))) %>%
+  ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
+    geom_point(alpha=I(0.05)) +
+    labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
+    facet_grid(month ~ ., margins = TRUE, drop = FALSE) + 
+    scale_y_continuous(limits=c(0,250))
 
+```
 
 
 
