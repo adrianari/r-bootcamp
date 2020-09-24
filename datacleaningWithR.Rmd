@@ -364,7 +364,7 @@ qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zae
 ```{r}
 join_zaehlung_wetter %>%
   arrange(UNIDIR) %>%
-  mutate(month = factor(month, levels=c("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober",       "November", "Dezember"))) %>%
+  mutate(month = factor(month, levels=c("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November"))) %>%
   ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
     geom_point(alpha=I(0.05)) +
     labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
@@ -386,8 +386,7 @@ Interpretation:
 
 
 ```{r}
-plot.gam(gam.model1, residuals = TRUE, select = 1, rug = TRUE)
-??mgcv::plot
+plot.gam(gam.model1, residuals = TRUE, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
 ```
 
 Interpretation:
