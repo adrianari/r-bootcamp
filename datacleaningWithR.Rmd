@@ -256,13 +256,7 @@ histogram(~ join_zaehlung_wetter$UNIDIR, xlim = c(0,250), breaks = 250, xlab = "
 
 ```
 
-The above illustration indicates that the data follows approximately an 1/x function. To normalize the data distribution for the unidirectional count of pedestrians & bikers, we logarithmize it to get appropr. normally distributed data.
-
-
-```{r}
-join_zaehlung_wetter$UNIDIR_log <- log(join_zaehlung_wetter$UNIDIR)
-histogram(~ join_zaehlung_wetter$UNIDIR_log, main = "Distribution of the unidirectional count of pedestrians & bikers (logarithmized)", col="orange")
-```
+The above illustration indicates that the data follows approximately an 1/x function. 
 
 
 ```{r}
@@ -382,11 +376,25 @@ join_zaehlung_wetter %>%
 
 
 #Generalised Additive Model
+```{r}
+lm.model1 <- gam(UNIDIR ~ precipitation + s(air_temperature), data = join_zaehlung_wetter)
+summary(lm.model1)
+```
 
+Interpretation:
+
+
+
+```{r}
+plot(lm.model1, residuals = TRUE, select = 1)
+```
+
+Interpretation:
 
 
 
 
 # Discussion
 
-very reliant on the quality of the data. (We do not know exactly how the counting stations worked --> ). Correction factors for the analysed time span is not available yet. 
+very reliant on the quality of the data. (We do not know exactly how the counting stations worked --> ). Correction factors for the analysed time span is not available yet. Did not have access to the data of the entire year, there is a cut off.
+What is not considered is if the effects of the temperature on other factors lik
