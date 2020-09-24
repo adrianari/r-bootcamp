@@ -59,7 +59,7 @@ Those are the keys for the counting station at Mythenquai according to the class
 
     
 **Dataset 2**: messwerte_mythenquai_2007-2019.csv  
-This document shows various variables (air temperature, precipitation, ...) for Mythenquai. Data are collected by the Wasserschutzpolizei Zürich.  
+This document shows various variables (air temperature, precipitation, ...) for Mythenquai. Data is collected by the Wasserschutzpolizei Zürich.  
 
 *Source*: [https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv](https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv)
 
@@ -72,6 +72,7 @@ library(stringr)
 library(dplyr)
 library(ggplot2)
 library(lattice)
+library(mgcv)
 
 ```
 
@@ -380,8 +381,12 @@ join_zaehlung_wetter %>%
 
 
 
+#Generalised Additive Model
 
 
 
 
-Discussion: very reliant on the quality of the data. (We do not know exactly how the counting stations worked --> ). Correction factors for the analysed time span is not available yet. 
+
+# Discussion
+
+very reliant on the quality of the data. (We do not know exactly how the counting stations worked --> ). Correction factors for the analysed time span is not available yet. 
