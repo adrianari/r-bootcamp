@@ -288,7 +288,7 @@ ggplot(data = join_zaehlung_wetter,
        mapping = aes(y = UNIDIR,   #aes us easthetics
                      x = air_temperature,
                      colour = TAGESZEIT)) +
-  geom_point()
+  geom_point(alpha=0.10) 
 
 ```
 
@@ -313,7 +313,7 @@ ggplot(data = join_zaehlung_wetter,
        mapping = aes(y = UNIDIR,   #aes us easthetics
                      x = air_temperature)) +
                      
-  geom_point() +
+  geom_point(alpha=0.05) +
   geom_smooth()
 ```
 
@@ -377,8 +377,8 @@ join_zaehlung_wetter %>%
 
 #Generalised Additive Model
 ```{r}
-lm.model1 <- gam(UNIDIR ~ precipitation + s(air_temperature), data = join_zaehlung_wetter)
-summary(lm.model1)
+gam.model1 <- gam(UNIDIR ~ precipitation + s(air_temperature), data = join_zaehlung_wetter)
+summary(gam.model1)
 ```
 
 Interpretation:
@@ -386,7 +386,8 @@ Interpretation:
 
 
 ```{r}
-plot(lm.model1, residuals = TRUE, select = 1)
+plot.gam(gam.model1, residuals = TRUE, select = 1, rug = TRUE)
+??mgcv::plot
 ```
 
 Interpretation:
