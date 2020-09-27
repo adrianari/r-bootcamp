@@ -110,7 +110,6 @@ Third, we categorize the hour indications into categories of the same length (6 
 ##changing the FK_ZAEHLER to an indicator if bike or pedestrians are measured
 zaehlung$FK_ZAEHLER <- as.character(zaehlung$FK_ZAEHLER)
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104443"] <- "fussgaenger"
-zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "U15G3104446"] <- "fussgaenger"
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "ECO09113499"] <- "velo"
 zaehlung$FK_ZAEHLER[zaehlung$FK_ZAEHLER == "ECO07091438"] <- "velo"
 zaehlung$FK_ZAEHLER <- as.factor(zaehlung$FK_ZAEHLER)
@@ -185,12 +184,12 @@ join_zaehlung_wetter$month <- as.factor(join_zaehlung_wetter$month)
 
 head(join_zaehlung_wetter)
 ```
+
 # Research question
 Does the air temperature influence the count of pedestrians and bikers at the location Mythenquai in Zurich?
 
 # Graphical Analysis
 
-## Scatterplot
 ```{r}
 #air temperature
 ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") 
