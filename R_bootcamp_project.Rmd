@@ -73,10 +73,7 @@ library(dplyr)
 library(ggplot2)
 library(lattice)
 library(mgcv)
-
 ```
-
-
 
 # Data Import / Data Cleaning
 ## Import of the datasets
@@ -85,14 +82,12 @@ library(mgcv)
 zaehlung <- read.csv("2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
 colnames(zaehlung)[1] <- "FK_ZAEHLER"
 
-
 #structure of the dataset
 str(zaehlung)
 head(zaehlung)
 ```
 
 The head of our dataset indicates that the traffic counters did not work for both pedestrians and bikers but only specifically for one of each.
-
 
 ```{r}
 wetter <- read.csv("wetter.csv", sep=";", header = TRUE)
@@ -189,9 +184,9 @@ join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-12"] <- "Dezember
 join_zaehlung_wetter$month <- as.factor(join_zaehlung_wetter$month)
 
 head(join_zaehlung_wetter)
-
 ```
 # Research question
+Does the air temperature influence the count of pedestrians and bikers at the location Mythenquai in Zurich?
 
 # Graphical Analysis
 
@@ -203,10 +198,7 @@ ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 
 
 As the above illustration shows, the data is not really uniformely distributed so that one cannot really recognize a specific pattern.
 
-
-
 However, these hints need to be considered with attention. So it is that one has not taken into account yet at this point that the air temperature does not occur uniformely distributed.
-
 
 As the extreme outliers distort the above illustration considerably, we take a closer look at how the points are distributed with an upper margin of 250 pedestrians and bikers per hour:
 
@@ -229,7 +221,6 @@ The above illustration indicates that the data follows approximately an 1/x func
 
 
 ```{r}
-## {ggplot2} ##
 par(mfrow = c(2, 2))
 qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT, ylim = c(0,250),alpha=I(0.05))
 ```
@@ -253,6 +244,7 @@ ggplot(data = join_zaehlung_wetter,
        mapping = aes(y = UNIDIR,   
                      x = air_temperature,
                      colour = TAGESZEIT)) +
+                     scale_y_continuous(limits=c(0,250)) +
   geom_point(alpha=0.10) 
 
 ```
@@ -261,6 +253,7 @@ ggplot(data = join_zaehlung_wetter,
 ggplot(data = join_zaehlung_wetter,
        mapping = aes(y = UNIDIR,  
                      x = air_temperature)) +
+                     scale_y_continuous(limits=c(0,250)) +
                      
   geom_point(alpha=0.05) +
   geom_smooth()
@@ -283,6 +276,7 @@ join_zaehlung_wetter %>%
     scale_y_continuous(limits=c(0,250))
 
 ```
+
 # Fit Model
 ## simple linear model
 ```{r}
@@ -291,18 +285,113 @@ boxplot(UNIDIR ~ FK_ZAEHLER, ylim = c(0,250), data = join_zaehlung_wetter)
 t.test(UNIDIR ~ FK_ZAEHLER, data = join_zaehlung_wetter)
 ```
 ```{r}
-#linear model
-lm.join_zaehlung_wetter <- lm(UNIDIR ~ FK_ZAEHLER + FK_STANDORT + TAGESZEIT + air_temperature + precipitation + humidity + month + wind_force_avg_10min,
+plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+     col = FK_ZAEHLER,
+     pch = 19,
+     main = "Count of pedestrians and bikers vs air temperature")
+##
+legend("topleft",
+       pch = 19,
+       legend = c("fussgaenger","velo"),
+       col = c("black", "red"))
+```
+```{r}
+lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature,
               data = join_zaehlung_wetter)
 # get results
 summary(lm.join_zaehlung_wetter)
+coef(lm.join_zaehlung_wetter)
 ```
+
+Interpretation: If there is a count of 0 pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.
+```{r}
+#visualisation of linear regression
+plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+     xlim = c(0, 40),
+     ylim = c(0, 250))
+##
+grid()
+##
+abline(a = coef(lm.join_zaehlung_wetter)[1],
+       b = coef(lm.join_zaehlung_wetter)[2],
+       col = "red", lty = "dashed")
+```
+```{r}
+lm.join_zaehlung_wetter2 <- lm(UNIDIR ~ air_temperature + FK_ZAEHLER, data = join_zaehlung_wetter)
+summary(lm.join_zaehlung_wetter2)
+```
+```{r}
+plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+     main = "Model 'lm.join_zaehlung_wetter2'",
+     col = FK_ZAEHLER)
+##
+legend("topleft", 
+       pch = 19,
+       legend = c("fussgaenger","velos"), 
+       col = c("black", "red"))
+##
+abline(a = coef(lm.join_zaehlung_wetter2)[1],
+       b = coef(lm.join_zaehlung_wetter2)[2])
+abline(a = coef(lm.join_zaehlung_wetter2)[1] + coef(lm.join_zaehlung_wetter2)[3] ,
+       b = coef(lm.join_zaehlung_wetter2)[2],
+       col = "red")
+```
+```{r}
+#coef(lm.join_zaehlung_wetter2)
+#coef(lm.join_zaehlung_wetter2["(Intercept)"])
+#coef(lm.join_zaehlung_wetter2["(Intercept)"] + coef(lm.join_zaehlung_wetter2)["FK_ZAEHLERvelo"])
+```
+```{r}
+lm.join_zaehlung_wetter3 <- lm(UNIDIR ~ air_temperature * FK_ZAEHLER, data = join_zaehlung_wetter)
+plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+     main = "Model 'lm.join_zaehlung_wetter3'",
+     xlim = c(-5, 40), 
+     ylim = c(-5, 1200),
+     col = FK_ZAEHLER)
+##
+grid()
+##
+abline(h = 0, lwd = 0.5)
+abline(v = 0, lwd = 0.5)
+##
+abline(a = coef(lm.join_zaehlung_wetter3)[1],
+       b = coef(lm.join_zaehlung_wetter3)[2])
+abline(a = coef(lm.join_zaehlung_wetter3)[1] + coef(lm.join_zaehlung_wetter3)[3] ,
+       b = coef(lm.join_zaehlung_wetter3)[2] + coef(lm.join_zaehlung_wetter3)[2:3],
+       col = "red")
+##
+legend("topleft", 
+       pch = 19,
+       legend = c("fussganger","velos"), 
+       col = c("black", "red"))
+```
+```{r}
+coef(lm.join_zaehlung_wetter3)
+```
+```{r}
+summary(lm.join_zaehlung_wetter2)$adj.r.squared
+summary(lm.join_zaehlung_wetter3)$adj.r.squared
+```
+
 ```{r}
 fit.join_zaehlung_wetter <- fitted(lm.join_zaehlung_wetter)
 head(fit.join_zaehlung_wetter)
 ```
+```{r}
+# # Plotting fitted values
+# plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+#      main = "Model 'lm.join_zaehlung_wetter'",
+#      col = "darkgray")
+# #
+# points(fit.join_zaehlung_wetter ~ UNIDIR, 
+#        col = "purple",
+#        pch = 19,
+#        data = join_zaehlung_wetter)
+# ##
+# abline(lm.join_zaehlung_wetter, col = "black")
+```
 
-#Generalised Additive Model
+# Generalised Additive Model
 ```{r}
 gam.model1 <- gam(UNIDIR ~ precipitation + s(air_temperature), data = join_zaehlung_wetter)
 summary(gam.model1)
