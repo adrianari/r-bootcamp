@@ -73,6 +73,7 @@ library(dplyr)
 library(ggplot2)
 library(lattice)
 library(mgcv)
+library(plotly)
 ```
 
 # Data Import / Data Cleaning
@@ -408,14 +409,26 @@ Interpretation:
 
 
 
+
+
 ```{r}
 plot.gam(gam.model1, residuals = TRUE, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
 ```
 
 Interpretation:
 
+#Multiple Linear Regression
 
+```{r}
+interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~UNIDIR, y = ~air_temperature, z = ~precipitation, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.7) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'UNIDIR'),
+                      yaxis = list(title = 'Air temperature'),
+                      zaxis = list(title = 'Precipitation')))
 
+interactive_graph
+
+```
 
 
 # Discussion
