@@ -280,9 +280,7 @@ model_gam <- ggplot(data = join_zaehlung_wetter,
   geom_point(alpha=0.05) +
   geom_smooth()
 
-
 model_gam
-
 ```
 Interpretation: 
 Not a linear model - therefore we use a gam to further analyse the non linearity
@@ -399,6 +397,22 @@ head(fit.join_zaehlung_wetter)
 # abline(lm.join_zaehlung_wetter, col = "black")
 ```
 
+# Multiple Linear Regression
+
+```{r}
+interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.65) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'Precipitation'),
+                      yaxis = list(title = 'Air temperature'),
+                      zaxis = list(title = 'UNIDIR')))
+
+interactive_graph
+
+```
+
+
+
+
 # Generalised Additive Model
 ```{r}
 gam.model1 <- gam(UNIDIR ~ precipitation + s(air_temperature), data = join_zaehlung_wetter)
@@ -419,18 +433,7 @@ plot.gam(gam.model1, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
 
 Interpretation:
 
-# Multiple Linear Regression
 
-```{r}
-interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.65) %>%
-  add_markers() %>%
-  layout(scene = list(xaxis = list(title = 'Precipitation'),
-                      yaxis = list(title = 'Air temperature'),
-                      zaxis = list(title = 'UNIDIR')))
-
-interactive_graph
-
-```
 
 # Results
 
