@@ -75,6 +75,7 @@ library(ggplot2)
 library(lattice)
 library(mgcv)
 library(plotly)
+
 ```
 
 # Data Import / Data Cleaning
@@ -271,13 +272,16 @@ In the above illustration, one can directly see the distribution of temperature 
 
 
 ```{r}
-ggplot(data = join_zaehlung_wetter,
+model_gam <- ggplot(data = join_zaehlung_wetter,
        mapping = aes(y = UNIDIR,  
                      x = air_temperature)) +
                      scale_y_continuous(limits=c(0,250)) +
                      
   geom_point(alpha=0.05) +
   geom_smooth()
+
+
+model_gam
 
 ```
 Interpretation: 
@@ -304,25 +308,29 @@ coef(lm.join_zaehlung_wetter)
 
 Interpretation: If there is a count of 0 pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.
 
-```{r}
-#visualisation of linear regression
-plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     xlim = c(0, 40),
-     ylim = c(0, 250))
-##
-grid()
-##
-abline(a = coef(lm.join_zaehlung_wetter)[1],
-       b = coef(lm.join_zaehlung_wetter)[2],
-       col = "red", lty = "dashed")
-```
+
+ADRIANA: ich weiss nicht, ob wir diese grafik drin behalten sollen.. 
+# ```{r}
+# #visualisation of linear regression
+# plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
+#      xlim = c(0, 40),
+#      ylim = c(0, 250))
+# ##
+# grid()
+# ##
+# abline(a = coef(lm.join_zaehlung_wetter)[1],
+#        b = coef(lm.join_zaehlung_wetter)[2],
+#        col = "red", lty = "dashed")
+#```
+
+
 ```{r}
 lm.join_zaehlung_wetter2 <- lm(UNIDIR ~ air_temperature + FK_ZAEHLER, data = join_zaehlung_wetter)
 summary(lm.join_zaehlung_wetter2)
 ```
 ```{r}
 plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     main = "Model 'lm.join_zaehlung_wetter2'",
+     main = "Model 'lm.join_zaehlung_wetter2 - without interaction'",
      col = FK_ZAEHLER)
 ##
 legend("topleft", 
@@ -336,15 +344,12 @@ abline(a = coef(lm.join_zaehlung_wetter2)[1] + coef(lm.join_zaehlung_wetter2)[3]
        b = coef(lm.join_zaehlung_wetter2)[2],
        col = "red")
 ```
-```{r}
-#coef(lm.join_zaehlung_wetter2)
-#coef(lm.join_zaehlung_wetter2["(Intercept)"])
-#coef(lm.join_zaehlung_wetter2["(Intercept)"] + coef(lm.join_zaehlung_wetter2)["FK_ZAEHLERvelo"])
-```
+
+
 ```{r}
 lm.join_zaehlung_wetter3 <- lm(UNIDIR ~ air_temperature * FK_ZAEHLER, data = join_zaehlung_wetter)
 plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     main = "Model 'lm.join_zaehlung_wetter3'",
+     main = "Model 'lm.join_zaehlung_wetter3' - with interaction",
      xlim = c(-5, 40), 
      ylim = c(-5, 1200),
      col = FK_ZAEHLER)
@@ -364,6 +369,9 @@ legend("topleft",
        pch = 19,
        legend = c("fussganger","velos"), 
        col = c("black", "red"))
+```
+```{r}
+coef(lm.join_zaehlung_wetter2)  
 ```
 ```{r}
 coef(lm.join_zaehlung_wetter3)
@@ -404,22 +412,24 @@ Interpretation:
 
 
 ```{r}
-plot.gam(gam.model1, residuals = TRUE, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
+plot.gam(gam.model1, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
+
+?plot.gam
 ```
 
 Interpretation:
 
-#Multiple Linear Regression
+# Multiple Linear Regression
 
 ```{r}
-interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.7) %>%
+interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.65) %>%
   add_markers() %>%
   layout(scene = list(xaxis = list(title = 'Precipitation'),
                       yaxis = list(title = 'Air temperature'),
                       zaxis = list(title = 'UNIDIR')))
 
-
 interactive_graph
+
 ```
 
 # Results
