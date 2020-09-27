@@ -133,12 +133,14 @@ zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "24"] <- "abend"
 zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 ```
 
-
+We further aggregate the data as follows:
 
 ```{r}
 #calculate the total of movements of pedestrians and bikers hourly
 aggregated_listFK <- aggregate(UNIDIR ~ FK_ZAEHLER + TAGESZEIT + OST + NORD + FK_STANDORT + DATUM, zaehlung, sum)
 ```
+
+
 
 ### Prepare dataset weather
 ```{r}
@@ -157,6 +159,8 @@ aggregated_wetter_Wind_Temp <- left_join(aggregated_Wind, aggregated_Temp, by = 
 aggregated_wetter_Wind_Temp_Prec <- left_join(aggregated_wetter_Wind_Temp, aggregated_Prec, by = "timestamp_cet")
 aggregated_wetter_Wind_Temp_Prec_Hum <- left_join(aggregated_wetter_Wind_Temp_Prec, aggregated_Hum, by = "timestamp_cet")
 ```
+
+Again, an aggregation has been done in order to grant the functioning of the next step:
 
 ### Joining both datasets together
 ```{r}
@@ -187,6 +191,9 @@ join_zaehlung_wetter <- subset(join_zaehlung_wetter_fulldata, month == "Februar"
 
 head(join_zaehlung_wetter)
 ```
+
+
+
 
 # Research question
 Does the air temperature influence the count of pedestrians and bikers at the location Mythenquai in Zurich?
@@ -293,6 +300,7 @@ coef(lm.join_zaehlung_wetter)
 ```
 
 Interpretation: If there is a count of 0 pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.
+
 ```{r}
 #visualisation of linear regression
 plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
