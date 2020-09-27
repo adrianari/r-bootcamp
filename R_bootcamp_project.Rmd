@@ -160,27 +160,30 @@ aggregated_wetter_Wind_Temp_Prec_Hum <- left_join(aggregated_wetter_Wind_Temp_Pr
 
 ### Joining both datasets together
 ```{r}
-join_zaehlung_wetter <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec_Hum, by = c("DATUM" = "timestamp_cet"))
+join_zaehlung_wetter_fulldata <- left_join(aggregated_listFK, aggregated_wetter_Wind_Temp_Prec_Hum, by = c("DATUM" = "timestamp_cet"))
 ```
 
 ```{r}
-join_zaehlung_wetter$month <- str_sub(join_zaehlung_wetter$DATUM, end = -7)
+join_zaehlung_wetter_fulldata$month <- str_sub(join_zaehlung_wetter_fulldata$DATUM, end = -7)
 ```
 ```{r}
-join_zaehlung_wetter$month <- as.character(join_zaehlung_wetter$month)
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-01"] <- "Januar"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-02"] <- "Februar"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-03"] <- "März"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-04"] <- "April"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-05"] <- "Mai"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-06"] <- "Juni"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-07"] <- "Juli"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-08"] <- "August"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-09"] <- "September"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-10"] <- "Oktober"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-11"] <- "November"
-join_zaehlung_wetter$month[join_zaehlung_wetter$month <= "2019-12"] <- "Dezember"
-join_zaehlung_wetter$month <- as.factor(join_zaehlung_wetter$month)
+join_zaehlung_wetter_fulldata$month <- as.character(join_zaehlung_wetter_fulldata$month)
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-01"] <- "Januar"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-02"] <- "Februar"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-03"] <- "März"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-04"] <- "April"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-05"] <- "Mai"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-06"] <- "Juni"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-07"] <- "Juli"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-08"] <- "August"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-09"] <- "September"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-10"] <- "Oktober"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-11"] <- "November"
+join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-12"] <- "Dezember"
+join_zaehlung_wetter_fulldata$month <- as.factor(join_zaehlung_wetter_fulldata$month)
+
+
+join_zaehlung_wetter <- subset(join_zaehlung_wetter_fulldata, month == "Februar"| month == "März" | month == "April" | month == "Mai" | month == "Juni" | month == "Juli")
 
 head(join_zaehlung_wetter)
 ```
@@ -220,10 +223,6 @@ The above illustration indicates that the data follows approximately an 1/x func
 
 
 ```{r}
-par(mfrow = c(2, 2))
-qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ TAGESZEIT, col = TAGESZEIT, ylim = c(0,250),alpha=I(0.05))
-```
-```{r}
 join_zaehlung_wetter %>%
   arrange(UNIDIR) %>%
   mutate(TAGESZEIT = factor(TAGESZEIT, levels=c("morgen", "vormittag", "nachmittag", "abend"))) %>%
@@ -238,15 +237,6 @@ join_zaehlung_wetter %>%
 qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER, ylim = c(0,250), alpha=I(0.05))
 ```
 
-```{r}
-ggplot(data = join_zaehlung_wetter,
-       mapping = aes(y = UNIDIR,   
-                     x = air_temperature,
-                     colour = TAGESZEIT)) +
-                     scale_y_continuous(limits=c(0,250)) +
-  geom_point(alpha=0.10) 
-
-```
 
 ```{r}
 ggplot(data = join_zaehlung_wetter,
@@ -267,7 +257,7 @@ Not a linear model - therefore we use a gam to further analyse the non linearity
 ```{r}
 join_zaehlung_wetter %>%
   arrange(UNIDIR) %>%
-  mutate(month = factor(month, levels=c("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November"))) %>%
+  mutate(month = factor(month, levels=c("Februar", "März", "April", "Mai", "Juni", "Juli"))) %>%
   ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
     geom_point(alpha=I(0.05)) +
     labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
