@@ -3,13 +3,14 @@ title: "R Bootcamp Group Work"
 author: "Salome Isch, Adriana Ricklin"
 date: "10.9.2020"
 output: 
-  pdf_document:
-    number_sections: yes
-    toc: yes
   html_document:
     number_sections: yes
     toc: yes
     toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -219,7 +220,7 @@ We further take a look at how these two variables appear in a combined version:
 
 ```{r}
 #air temperature
-ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") 
+ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") + geom_smooth(method = "lm", colour = "red")
 ```
 
 As the above illustration shows, the data is not really uniformely distributed so that one cannot really recognize a specific pattern. However,  generally spoken, higher y-values are rather reached by points that are rather on the right side of the x-axis, indicating that there is a positive correlation between temperature and number of pedestrians / bikers.
@@ -227,16 +228,17 @@ As the above illustration shows, the data is not really uniformely distributed s
 As the extreme outliers distort the above illustration considerably, we take a closer look at how the points are distributed with an upper margin of 250 pedestrians and bikers per hour:
 
 ```{r}
-ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") + ylim(c(0,250))           
+ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") + ylim(c(0,250)) + geom_smooth(method = "lm", colour = "red")
 ```
 
+A simple regression line further shows a positive slope, meaning the positive correlation between air temperature and total count of pedestrians and bikers is strengthened.
 Furthermore, we take into account the time of the day:
 
 ```{r}
 join_zaehlung_wetter %>%
   arrange(UNIDIR) %>%
   mutate(TAGESZEIT = factor(TAGESZEIT, levels=c("morgen", "vormittag", "nachmittag", "abend"))) %>%
-  ggplot(aes(air_temperature, UNIDIR, colour = factor(TAGESZEIT))) +
+  ggplot(aes(air_temperature, UNIDIR, colour = factor(TAGESZEIT))) + geom_smooth(method = "lm", colour = "red") +
     labs(title = "Bikers and pedestrians by time of day", x = "Air temperature") +
     geom_point(alpha=I(0.05)) +
     facet_grid(. ~ TAGESZEIT) +
@@ -258,15 +260,14 @@ join_zaehlung_wetter %>%
   arrange(UNIDIR) %>%
   mutate(month = factor(month, levels=c("Februar", "März", "April", "Mai", "Juni", "Juli"))) %>%
   ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
-    geom_point(alpha=I(0.05)) +
+    geom_point(alpha=I(0.05)) + geom_smooth(method = "lm", colour = "red") +
     labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
     facet_grid(month ~ ., margins = TRUE, drop = FALSE) + 
     scale_y_continuous(limits=c(0,250))
 
 ```
 
-
-
+In the above illustration, one can directly see the distribution of temperature per month as well as the number of counted people. 
 
 
 ```{r}
@@ -277,6 +278,7 @@ ggplot(data = join_zaehlung_wetter,
                      
   geom_point(alpha=0.05) +
   geom_smooth()
+
 ```
 Interpretation: 
 Not a linear model - therefore we use a gam to further analyse the non linearity
@@ -291,17 +293,7 @@ boxplot(UNIDIR ~ FK_ZAEHLER, ylim = c(0,250), data = join_zaehlung_wetter)
 ## running the test
 t.test(UNIDIR ~ FK_ZAEHLER, data = join_zaehlung_wetter)
 ```
-```{r}
-plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     col = FK_ZAEHLER,
-     pch = 19,
-     main = "Count of pedestrians and bikers vs air temperature")
-##
-legend("topleft",
-       pch = 19,
-       legend = c("fussgaenger","velo"),
-       col = c("black", "red"))
-```
+
 ```{r}
 lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature,
               data = join_zaehlung_wetter)
@@ -420,15 +412,17 @@ Interpretation:
 #Multiple Linear Regression
 
 ```{r}
-interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~UNIDIR, y = ~air_temperature, z = ~precipitation, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.7) %>%
+interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.7) %>%
   add_markers() %>%
-  layout(scene = list(xaxis = list(title = 'UNIDIR'),
+  layout(scene = list(xaxis = list(title = 'Precipitation'),
                       yaxis = list(title = 'Air temperature'),
-                      zaxis = list(title = 'Precipitation')))
+                      zaxis = list(title = 'UNIDIR')))
+
 
 interactive_graph
-
 ```
+
+# Results
 
 
 # Discussion
