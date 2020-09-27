@@ -243,11 +243,29 @@ join_zaehlung_wetter %>%
 ```
 
 Whereas for mornings and evenings, the occurences are mainly between 0 - 50 counted bikers or pedestrians, the range is more wide for the time around noon (6:00 to 12:00 and 12:00 to 18:00). 
+These are of course also the hours where most people go to work or school. However, considering the x-axis aka temperature, it becomes more apparent that there seems to be a positive correlation between temperature and number of pedestrians / bikers.
+
+This seems to be true for both pedestrians as well as bikers as the distribution does not differ in a considerate way:
 
 
 ```{r}
 qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ FK_ZAEHLER, col = FK_ZAEHLER, ylim = c(0,250), alpha=I(0.05))
 ```
+
+```{r}
+join_zaehlung_wetter %>%
+  arrange(UNIDIR) %>%
+  mutate(month = factor(month, levels=c("Februar", "März", "April", "Mai", "Juni", "Juli"))) %>%
+  ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
+    geom_point(alpha=I(0.05)) +
+    labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
+    facet_grid(month ~ ., margins = TRUE, drop = FALSE) + 
+    scale_y_continuous(limits=c(0,250))
+
+```
+
+
+
 
 
 ```{r}
@@ -263,20 +281,7 @@ Interpretation:
 Not a linear model - therefore we use a gam to further analyse the non linearity
 
 
-```{r}
-# qplot(y = UNIDIR, x = air_temperature, xlab = "Air temperature", data = join_zaehlung_wetter, facets = ~ month, col = month,alpha=I(0.05))
-```
-```{r}
-join_zaehlung_wetter %>%
-  arrange(UNIDIR) %>%
-  mutate(month = factor(month, levels=c("Februar", "März", "April", "Mai", "Juni", "Juli"))) %>%
-  ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
-    geom_point(alpha=I(0.05)) +
-    labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
-    facet_grid(month ~ ., margins = TRUE, drop = FALSE) + 
-    scale_y_continuous(limits=c(0,250))
 
-```
 
 # Fit Model
 ## simple linear model
