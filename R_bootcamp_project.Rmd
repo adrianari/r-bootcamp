@@ -75,6 +75,7 @@ library(ggplot2)
 library(lattice)
 library(mgcv)
 library(plotly)
+library(reshape2)
 
 ```
 
@@ -191,6 +192,10 @@ join_zaehlung_wetter_fulldata$month <- as.factor(join_zaehlung_wetter_fulldata$m
 
 
 join_zaehlung_wetter <- subset(join_zaehlung_wetter_fulldata, month == "Februar"| month == "März" | month == "April" | month == "Mai" | month == "Juni" | month == "Juli")
+
+join_zaehlung_wetter[c("4351"),] <- join_zaehlung_wetter[c("4350"),]
+summary(is.na(join_zaehlung_wetter$precipitation)) 
+
 
 head(join_zaehlung_wetter)
 ```
@@ -405,6 +410,26 @@ interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitatio
   layout(scene = list(xaxis = list(title = 'Precipitation'),
                       yaxis = list(title = 'Air temperature'),
                       zaxis = list(title = 'UNIDIR')))
+
+
+unidir_lm <- lm(UNIDIR ~ 0 + precipitation + air_temperature, data = join_zaehlung_wetter)
+graph_reso <- 0.05
+
+min(join_zaehlung_wetter$precipitation) 
+
+#Setup Axis
+axis_x <- seq(from = min(join_zaehlung_wetter$precipitation), to = max(join_zaehlung_wetter$precipitation), by = graph_reso)
+axis_y <- seq(min(my_df$Sepal.Width), max(my_df$Sepal.Width), by = graph_reso)
+
+#Sample points
+petal_lm_surface <- expand.grid(Sepal.Length = axis_x,Sepal.Width = axis_y,KEEP.OUT.ATTRS = F)
+petal_lm_surface$Petal.Length <- predict.lm(petal_lm, newdata = petal_lm_surface)
+petal_lm_surface <- acast(petal_lm_surface, Sepal.Width ~ Sepal.Length, value.var = "Petal.Length") #y ~ x
+
+
+?min
+?seq
+
 
 interactive_graph
 
