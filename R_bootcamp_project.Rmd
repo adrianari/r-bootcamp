@@ -415,21 +415,20 @@ interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitatio
 unidir_lm <- lm(UNIDIR ~ 0 + precipitation + air_temperature, data = join_zaehlung_wetter)
 graph_reso <- 0.05
 
-min(join_zaehlung_wetter$precipitation) 
-
 #Setup Axis
 axis_x <- seq(from = min(join_zaehlung_wetter$precipitation), to = max(join_zaehlung_wetter$precipitation), by = graph_reso)
-axis_y <- seq(min(my_df$Sepal.Width), max(my_df$Sepal.Width), by = graph_reso)
+axis_y <- seq(min(join_zaehlung_wetter$air_temperature), max(join_zaehlung_wetter$air_temperature), by = graph_reso)
 
 #Sample points
-petal_lm_surface <- expand.grid(Sepal.Length = axis_x,Sepal.Width = axis_y,KEEP.OUT.ATTRS = F)
-petal_lm_surface$Petal.Length <- predict.lm(petal_lm, newdata = petal_lm_surface)
-petal_lm_surface <- acast(petal_lm_surface, Sepal.Width ~ Sepal.Length, value.var = "Petal.Length") #y ~ x
+unidir_lm_surface <- expand.grid(precipitation = axis_x, air_temperature = axis_y, KEEP.OUT.ATTRS = F)
+unidir_lm_surface$UNIDIR <- predict.lm(unidir_lm, newdata = unidir_lm_surface)
+unidir_lm_surface <- acast(unidir_lm_surface, air_temperature ~ precipitation, value.var = "UNIDIR")
 
-
-?min
-?seq
-
+interactive_graph <- add_trace(p = interactive_graph,
+                       z = unidir_lm_surface,
+                       x = axis_x,
+                       y = axis_y,
+                       type = "surface")
 
 interactive_graph
 
