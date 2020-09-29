@@ -7,3 +7,4 @@ lattice
 nlme
 mgcv
 plotly
+reshape2

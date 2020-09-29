@@ -412,9 +412,12 @@ interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitatio
                       zaxis = list(title = 'UNIDIR')))
 
 
-unidir_lm <- lm(UNIDIR ~ 0 + precipitation + air_temperature, data = join_zaehlung_wetter)
+unidir_lm <- lm(UNIDIR ~ precipitation + air_temperature, data = join_zaehlung_wetter)
 graph_reso <- 0.05
 
+```
+
+```{r}
 #Setup Axis
 axis_x <- seq(from = min(join_zaehlung_wetter$precipitation), to = max(join_zaehlung_wetter$precipitation), by = graph_reso)
 axis_y <- seq(min(join_zaehlung_wetter$air_temperature), max(join_zaehlung_wetter$air_temperature), by = graph_reso)
@@ -434,7 +437,9 @@ interactive_graph
 
 ```
 
-
+```{r}
+unidir_lm
+```
 
 
 # Generalised Additive Model
