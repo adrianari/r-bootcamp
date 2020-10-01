@@ -70,14 +70,15 @@ Again, for computational reasons, a preselection in Excel has been done for this
 ```{r}
 library(dplyr)
 library(stringr)
-library(dplyr)
 library(ggplot2)
 library(lattice)
 library(mgcv)
 library(plotly)
 library(reshape2)
-
+library(tidyverse)
+library(caret)
 ```
+
 
 # Data Import / Data Cleaning
 ## Import of the datasets
@@ -293,11 +294,12 @@ By eye, it seems that in months where the distribution is more on the right hand
 # Simple regression
 
 ```{r}
+#comparison of bikers and pedestrians
 boxplot(UNIDIR ~ FK_ZAEHLER, ylim = c(0,250), data = join_zaehlung_wetter)
 ## running the test
 t.test(UNIDIR ~ FK_ZAEHLER, data = join_zaehlung_wetter)
 ```
-
+In the boxplot it can be seen, that the median of the count of bikers is slightly higher than the count of pedestrians.  
 
 
 ```{r}
@@ -305,23 +307,30 @@ lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature, data = join_zaehlung_wet
 summary(lm.join_zaehlung_wetter)
 ```
 
-Interpretation: P-Value is very small, there is high that it is not 0 for air temperature and precipitation. If there is a count of zero pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.This does not make much sense, as there are other factors involved.
+There is strong evidence, that the mean growth rate for air temperature is not eual to zero. If there is a count of zero pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.This does not make much sense, as there are other factors involved.
 
 ```{r}
 join_zaehlung_wetter$predicted <- predict(lm.join_zaehlung_wetter)
 join_zaehlung_wetter$residuals <- residuals(lm.join_zaehlung_wetter)
 ```
+
+
 ```{r}
 ggplot(join_zaehlung_wetter, aes(x = air_temperature, y = UNIDIR)) +
-  geom_smooth(method = "lm", se = FALSE, col = "lightgrey") +
-  geom_segment(aes(xend = air_temperature, yend = predicted), alpha = 0.05) +
-  geom_point(aes(color = abs(residuals), size = abs(residuals))) +
-  scale_color_continuous(low = "green", high = "red") +
+  geom_smooth(method = "lm", se = FALSE, color = "darkgrey") +
+  geom_segment(aes(xend = air_temperature, yend = predicted), alpha = .2) +
+  #geom_point(aes(color = abs(residuals), size = abs(residuals))) +
+  #scale_color_continuous(low = "green", high = "red") +
+  geom_point(aes(color = residuals)) +
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +
   guides(color = FALSE, size = FALSE) +
   geom_point(aes(y = predicted), shape = 1) +
-  labs(title = "Residuals", x = "Air temperature") +
+  labs(title = "Residual analysis", x = "Air temperature") +
   theme_bw()
 ```
+
+There are many data points where the actual values are greater than what is being predicted. There is some blue at the end of the spectre, indicating that the actual values are less than what is being predicted. This suggests hat the relationship might be non-linear.
+
 ```{r}
 rss.lin <- sum((lm.join_zaehlung_wetter$residuals)^2)
 mse.lin <- rss.lin/length(join_zaehlung_wetter$residuals)
@@ -404,12 +413,31 @@ rmse.gam
 
 ```
 
+
 In comparison with the analysis of the residuals of the multiple regression (with an RMSE of 72.14), a GAM modell performs better in terms of fitting the points to a model as the modell RMSE (residual mean squared error) is at 65.3815.
 
 
 ```{r}
 plot.gam(gam.model1, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
 ```
+```{r}
+#Cross validation for linear regression
+# Define training control
+set.seed(123) 
+train.control <- trainControl(method = "cv", number = 10)
+gam.train.control <- trainControl(method = "cv", number = 10)
+# Train the model
+#Cross validation for linear regression
+cv.model <- train(UNIDIR ~ air_temperature, data = join_zaehlung_wetter, method = "lm",
+               trControl = train.control)
+#cross validation for gam model
+cv.gam.model <- train(UNIDIR ~ air_temperature + precipitation, data = join_zaehlung_wetter, method = "gam",
+                trControl = gam.train.control)
+# Summarize the results
+print(cv.model)
+print(cv.gam.model)
+```
+
 
 
 # Results
