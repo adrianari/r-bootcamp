@@ -301,7 +301,7 @@ t.test(UNIDIR ~ FK_ZAEHLER, data = join_zaehlung_wetter)
 
 
 ```{r}
-lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature + precipitation, data = join_zaehlung_wetter)
+lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature, data = join_zaehlung_wetter)
 summary(lm.join_zaehlung_wetter)
 ```
 
