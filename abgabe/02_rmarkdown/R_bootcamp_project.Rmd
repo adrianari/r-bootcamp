@@ -228,7 +228,12 @@ We further take a look at how these two variables appear in a combined version:
 
 ```{r}
 #air temperature
-ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") + geom_smooth(method = "lm", colour = "red")
+ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + 
+  geom_point(alpha = 0.05, color="darkblue") + 
+  ggtitle("Does air temperature affect the number of bikers and pedestrians?") + 
+  xlab("Air temperature") + 
+  ylab("Total count of ped. + bikers") + 
+  geom_smooth(method = "lm", colour = "red")
 ```
 
 As the above illustration shows, the data is not really uniformely distributed so that one cannot really recognize a specific pattern. However,  generally spoken, higher y-values are rather reached by points that are rather on the right side of the x-axis, indicating that there is a positive correlation between temperature and number of pedestrians / bikers.
@@ -237,12 +242,12 @@ As the extreme outliers distort the above illustration considerably, we take a c
 
 ```{r}
 ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + 
-  geom_point(alpha = 0.05, color="darkblue") 
-  + ggtitle("Does air temperature affect the number of bikers and pedestrians?") 
-  + xlab("Air temperature") 
-  + ylab("Total count of ped. + bikers") 
-  + ylim(c(0,250)) 
-  + geom_smooth(method = "lm", colour = "red")
+  geom_point(alpha = 0.05, color="darkblue") + 
+  ggtitle("Does air temperature affect the number of bikers and pedestrians?") + 
+  xlab("Air temperature") + 
+  ylab("Total count of ped. + bikers") + 
+  ylim(c(0,250)) + 
+  geom_smooth(method = "lm", colour = "red")
 ```
 
 A simple regression line further shows a positive slope, meaning the positive correlation between air temperature and total count of pedestrians and bikers is strengthened.
@@ -293,79 +298,32 @@ boxplot(UNIDIR ~ FK_ZAEHLER, ylim = c(0,250), data = join_zaehlung_wetter)
 t.test(UNIDIR ~ FK_ZAEHLER, data = join_zaehlung_wetter)
 ```
 
+
+
 ```{r}
-lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature,
-              data = join_zaehlung_wetter)
-# get results
+lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature + precipitation, data = join_zaehlung_wetter)
 summary(lm.join_zaehlung_wetter)
-coef(lm.join_zaehlung_wetter)
 ```
 
-Interpretation: If there is a count of 0 pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.
-
-
+Interpretation: P-Value is very small, there is high that it is not 0 for air temperature and precipitation. If there is a count of zero pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.This does not make much sense, as there are other factors involved.
 
 ```{r}
-lm.join_zaehlung_wetter2 <- lm(UNIDIR ~ air_temperature + FK_ZAEHLER, data = join_zaehlung_wetter)
-summary(lm.join_zaehlung_wetter2)
+join_zaehlung_wetter$predicted <- predict(lm.join_zaehlung_wetter)
+join_zaehlung_wetter$residuals <- residuals(lm.join_zaehlung_wetter)
 ```
 ```{r}
-plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     main = "Model 'lm.join_zaehlung_wetter2 - without interaction'",
-     col = FK_ZAEHLER)
-##
-legend("topleft", 
-       pch = 19,
-       legend = c("fussgaenger","velos"), 
-       col = c("black", "red"))
-##
-abline(a = coef(lm.join_zaehlung_wetter2)[1],
-       b = coef(lm.join_zaehlung_wetter2)[2])
-abline(a = coef(lm.join_zaehlung_wetter2)[1] + coef(lm.join_zaehlung_wetter2)[3] ,
-       b = coef(lm.join_zaehlung_wetter2)[2],
-       col = "red")
+ggplot(join_zaehlung_wetter, aes(x = air_temperature, y = UNIDIR)) +
+  geom_smooth(method = "lm", se = FALSE, col = "lightgrey") +
+  geom_segment(aes(xend = air_temperature, yend = predicted), alpha = 0.05) +
+  geom_point(aes(color = abs(residuals), size = abs(residuals))) +
+  scale_color_continuous(low = "green", high = "red") +
+  guides(color = FALSE, size = FALSE) +
+  geom_point(aes(y = predicted), shape = 1) +
+  labs(title = "Residuals", x = "Air temperature") +
+  theme_bw()
 ```
 
 
-```{r}
-lm.join_zaehlung_wetter3 <- lm(UNIDIR ~ air_temperature * FK_ZAEHLER, data = join_zaehlung_wetter)
-plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-     main = "Model 'lm.join_zaehlung_wetter3' - with interaction",
-     xlim = c(-5, 40), 
-     ylim = c(-5, 1200),
-     col = FK_ZAEHLER)
-##
-grid()
-##
-abline(h = 0, lwd = 0.5)
-abline(v = 0, lwd = 0.5)
-##
-abline(a = coef(lm.join_zaehlung_wetter3)[1],
-       b = coef(lm.join_zaehlung_wetter3)[2])
-abline(a = coef(lm.join_zaehlung_wetter3)[1] + coef(lm.join_zaehlung_wetter3)[3] ,
-       b = coef(lm.join_zaehlung_wetter3)[2] + coef(lm.join_zaehlung_wetter3)[2:3],
-       col = "red")
-##
-legend("topleft", 
-       pch = 19,
-       legend = c("fussganger","velos"), 
-       col = c("black", "red"))
-```
-```{r}
-coef(lm.join_zaehlung_wetter2)  
-```
-```{r}
-coef(lm.join_zaehlung_wetter3)
-```
-```{r}
-summary(lm.join_zaehlung_wetter2)$adj.r.squared
-summary(lm.join_zaehlung_wetter3)$adj.r.squared
-```
-
-```{r}
-fit.join_zaehlung_wetter <- fitted(lm.join_zaehlung_wetter)
-head(fit.join_zaehlung_wetter)
-```
 
 # Multiple Linear Regression
 
