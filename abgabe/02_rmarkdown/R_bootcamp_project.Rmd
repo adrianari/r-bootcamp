@@ -322,7 +322,15 @@ ggplot(join_zaehlung_wetter, aes(x = air_temperature, y = UNIDIR)) +
   labs(title = "Residuals", x = "Air temperature") +
   theme_bw()
 ```
+```{r}
+rss.lin <- sum((lm.join_zaehlung_wetter$residuals)^2)
+mse.lin <- rss.lin/length(join_zaehlung_wetter$residuals)
+rmse.lin <- sqrt(mse.lin)
 
+rss.lin
+mse.lin
+rmse.lin
+```
 
 
 # Multiple Linear Regression
