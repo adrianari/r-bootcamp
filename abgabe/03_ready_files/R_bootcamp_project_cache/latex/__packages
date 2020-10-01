@@ -1,0 +1,10 @@
+base
+formatR
+dplyr
+stringr
+ggplot2
+lattice
+nlme
+mgcv
+plotly
+reshape2

@@ -3,13 +3,13 @@ title: "R Bootcamp Group Work"
 author: "Salome Isch, Adriana Ricklin"
 date: "10.9.2020"
 output: 
+  pdf_document:
+    number_sections: yes
+    toc: yes
   html_document:
     number_sections: yes
     toc: yes
     toc_float: yes
-  pdf_document:
-    number_sections: yes
-    toc: yes
 always_allow_html: true
 ---
 
@@ -274,7 +274,7 @@ join_zaehlung_wetter %>%
 ```
 
 In the above illustration, one can directly see the distribution of temperature per month as well as the number of counted people. 
-
+By eye, it seems that in months where the distribution is more on the right handside, the points are darker as well as distributed higher on the y-axis.
 
 ```{r}
 model_gam <- ggplot(data = join_zaehlung_wetter,
@@ -293,8 +293,8 @@ Not a linear model - therefore we use a gam to further analyse the non linearity
 
 
 
-# Fit Model
-## simple linear model
+# Simple regression
+
 ```{r}
 boxplot(UNIDIR ~ FK_ZAEHLER, ylim = c(0,250), data = join_zaehlung_wetter)
 ## running the test
@@ -311,20 +311,6 @@ coef(lm.join_zaehlung_wetter)
 
 Interpretation: If there is a count of 0 pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.
 
-
-ADRIANA: ich weiss nicht, ob wir diese grafik drin behalten sollen.. 
-# ```{r}
-# #visualisation of linear regression
-# plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-#      xlim = c(0, 40),
-#      ylim = c(0, 250))
-# ##
-# grid()
-# ##
-# abline(a = coef(lm.join_zaehlung_wetter)[1],
-#        b = coef(lm.join_zaehlung_wetter)[2],
-#        col = "red", lty = "dashed")
-#```
 
 
 ```{r}
@@ -407,7 +393,7 @@ head(fit.join_zaehlung_wetter)
 In the further step, we add a further variable: We look at the relationship of precipitation and temperature to the number of bikers / pedestrians. By this, we also see what happens to a model if one adds a further variable:
 
 ```{r}
-interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, color = factor(join_zaehlung_wetter$TAGESZEIT), alpha = 0.65) %>%
+interactive_graph <- plot_ly(data.frame(join_zaehlung_wetter), x = ~precipitation, y = ~air_temperature, z = ~UNIDIR, alpha = 0.3) %>%
   add_markers() %>%
   layout(scene = list(xaxis = list(title = 'Precipitation'),
                       yaxis = list(title = 'Air temperature'),
@@ -449,37 +435,47 @@ We have a look at how good our regression plane fits the data points given:
 
 ```{r}
 rss.multiregression <- sum((unidir_lm$residuals)^2)
-mse <- rss.multiregression/length(unidir_lm$residuals)
+mse.multiregression <- rss.multiregression/length(unidir_lm$residuals)
+rmse.multiregression <- sqrt(mse.multiregression)
+
+rss.multiregression
+mse.multiregression
+rmse.multiregression
 ```
-
-
 
 
 # Generalised Additive Model
 ```{r}
 gam.model1 <- gam(UNIDIR ~ precipitation + s(air_temperature), data = join_zaehlung_wetter)
+
+
+rss.gam <- sum((gam.model1$residuals)^2)
+mse.gam <- rss.gam/length(gam.model1$residuals)
+rmse.gam <- sqrt(mse.gam)
+
+rss.gam
+mse.gam
+rmse.gam
+
 ```
 
-Interpretation:
-
-
-
+In comparison with the analysis of the residuals of the multiple regression (with an RMSE of 72.14), a GAM modell performs better in terms of fitting the points to a model as the modell RMSE (residual mean squared error) is at 65.3815.
 
 
 ```{r}
 plot.gam(gam.model1, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
-
-?plot.gam
 ```
-
-Interpretation:
-
 
 
 # Results
 
+The models in this paper suggest that the influence of temperature on pedestrians / bikers is positive. For precipitation, the opposite is true: the more precipitation, the less pedestrians / bikers. Of course, correlation is not causality. Neither do temperature or precipitation explain the outliers. Meaning there must be more for the motivation to go outside (by foot or bike) than simply the variables discussed.
+
 
 # Discussion
 
-very reliant on the quality of the data. (We do not know exactly how the counting stations worked --> ). Correction factors for the analysed time span is not available yet. Did not have access to the data of the entire year, there is a cut off.
-What is not considered is if the effects of the temperature on other factors lik
+These analysis are very reliant on the quality of the data, meaning how the data was collected. For this very thing, no additional information could be found, so we are not 100% sure how the counting stations worked, if they counted double etc. Furthermore, the correction factors for the analysed time span is not available yet. 
+
+What neither is considered in this paper are the effects of like air temperature or precipiation on other factors such as if streets have become icy.
+
+Such questions would surely be interesting to be analysed in a further paper. One could also specially take into account days, where there are big days in Zurich like Street Parade. 
