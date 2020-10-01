@@ -82,7 +82,7 @@ library(reshape2)
 # Data Import / Data Cleaning
 ## Import of the datasets
 ```{r}
-#read in data
+#read in data count of pedestrians and bikers
 zaehlung <- read.csv("../01_data/2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv", sep=";", header = TRUE)
 colnames(zaehlung)[1] <- "FK_ZAEHLER"
 
@@ -94,17 +94,18 @@ head(zaehlung)
 The head of our dataset indicates that the traffic counters did not work for both pedestrians and bikers but only specifically for one of each.
 
 ```{r}
+#read in data weather
 wetter <- read.csv("../01_data/wetter.csv", sep=";", header = TRUE)
 #structure of the dataset
 str(wetter)
 head(wetter)
 ```
 
-We thus categorize the counting stations accordingly and summarize the data into one shared column.
+We thus categorise the counting stations accordingly and summarise the data into one shared column.
 
 As the traffic counters made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
 
-Third, we categorize the hour indications into categories of the same length (6 hour indications per factor) "morgen", "vormittag", "nachmittag" and "abend". 
+Third, we categorise the hour indications into categories of the same length (6 hour indications per factor) "morgen", "vormittag", "nachmittag" and "abend". 
 
 
 ## Preparation of the datasets
@@ -128,7 +129,7 @@ zaehlung[, "IN"] <- zaehlung[4]+zaehlung[6]
 zaehlung[, "OUT"] <- zaehlung[5] + zaehlung[7]
 zaehlung[, "UNIDIR"] <- zaehlung[4] + zaehlung [5] + zaehlung[6] +  zaehlung[7]
 
-# new categorie for the time of day in intervals of 6 hours
+#new categorie for the time of day in intervals of 6 hours
 zaehlung[, "TAGESZEIT"] <-str_sub(zaehlung$DATUM, 12)
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "06"] <- "morgen"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "12"] <- "vormittag"
@@ -175,6 +176,7 @@ join_zaehlung_wetter_fulldata <- left_join(aggregated_listFK, aggregated_wetter_
 join_zaehlung_wetter_fulldata$month <- str_sub(join_zaehlung_wetter_fulldata$DATUM, end = -7)
 ```
 ```{r}
+#add new category month
 join_zaehlung_wetter_fulldata$month <- as.character(join_zaehlung_wetter_fulldata$month)
 join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-01"] <- "Januar"
 join_zaehlung_wetter_fulldata$month[join_zaehlung_wetter_fulldata$month <= "2019-02"] <- "Februar"
@@ -196,7 +198,7 @@ join_zaehlung_wetter <- subset(join_zaehlung_wetter_fulldata, month == "Februar"
 join_zaehlung_wetter[c("4351"),] <- join_zaehlung_wetter[c("4350"),]
 summary(is.na(join_zaehlung_wetter$precipitation)) 
 
-
+#complete dataset
 head(join_zaehlung_wetter)
 ```
 
@@ -211,7 +213,7 @@ Does air temperature influence the number of pedestrians and bikers at Mythenqua
 We first take a look at the distribution of variables that are of interest to us separately. 
 
 ```{r}
-histogram(~ air_temperature, data=join_zaehlung_wetter, xlab = "Air temperatur [°C]", main="Distribution of air temperature", breaks = 20)
+histogram(~ air_temperature, data=join_zaehlung_wetter, xlab = "Air temperature [°C]", main="Distribution of air temperature", breaks = 20)
 ```
 
 Air temperature does not occur uniformely distributed. This illustration shows that the air temperature follow approximately a normal distribution instead.
@@ -234,7 +236,13 @@ As the above illustration shows, the data is not really uniformely distributed s
 As the extreme outliers distort the above illustration considerably, we take a closer look at how the points are distributed with an upper margin of 250 pedestrians and bikers per hour:
 
 ```{r}
-ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + geom_point(alpha = 0.05, color="darkblue") + ggtitle("Does air temperature affect the number of bikers and pedestrians?") + xlab("Air temperature") + ylab("Total count of ped. + bikers") + ylim(c(0,250)) + geom_smooth(method = "lm", colour = "red")
+ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) + 
+  geom_point(alpha = 0.05, color="darkblue") 
+  + ggtitle("Does air temperature affect the number of bikers and pedestrians?") 
+  + xlab("Air temperature") 
+  + ylab("Total count of ped. + bikers") 
+  + ylim(c(0,250)) 
+  + geom_smooth(method = "lm", colour = "red")
 ```
 
 A simple regression line further shows a positive slope, meaning the positive correlation between air temperature and total count of pedestrians and bikers is strengthened.
@@ -268,29 +276,13 @@ join_zaehlung_wetter %>%
   ggplot(aes(air_temperature, UNIDIR, colour = factor(month))) +
     geom_point(alpha=I(0.05)) + geom_smooth(method = "lm", colour = "red") +
     labs(title = "Bikers and pedestrians by month", x = "Air temperature") +
-    facet_grid(month ~ ., margins = TRUE, drop = FALSE) + 
+    facet_grid(. ~ month, margins = TRUE, drop = FALSE) + 
     scale_y_continuous(limits=c(0,250))
 
 ```
 
 In the above illustration, one can directly see the distribution of temperature per month as well as the number of counted people. 
 By eye, it seems that in months where the distribution is more on the right handside, the points are darker as well as distributed higher on the y-axis.
-
-```{r}
-model_gam <- ggplot(data = join_zaehlung_wetter,
-       mapping = aes(y = UNIDIR,  
-                     x = air_temperature)) +
-                     scale_y_continuous(limits=c(0,250)) +
-                     
-  geom_point(alpha=0.05) +
-  geom_smooth()
-
-model_gam
-```
-Interpretation: 
-Not a linear model - therefore we use a gam to further analyse the non linearity
-
-
 
 
 # Simple regression
@@ -373,19 +365,6 @@ summary(lm.join_zaehlung_wetter3)$adj.r.squared
 ```{r}
 fit.join_zaehlung_wetter <- fitted(lm.join_zaehlung_wetter)
 head(fit.join_zaehlung_wetter)
-```
-```{r}
-# # Plotting fitted values
-# plot(UNIDIR ~ air_temperature, data = join_zaehlung_wetter,
-#      main = "Model 'lm.join_zaehlung_wetter'",
-#      col = "darkgray")
-# #
-# points(fit.join_zaehlung_wetter ~ UNIDIR, 
-#        col = "purple",
-#        pch = 19,
-#        data = join_zaehlung_wetter)
-# ##
-# abline(lm.join_zaehlung_wetter, col = "black")
 ```
 
 # Multiple Linear Regression
