@@ -8,3 +8,10 @@ nlme
 mgcv
 plotly
 reshape2
+tidyverse
+tibble
+tidyr
+readr
+purrr
+forcats
+caret

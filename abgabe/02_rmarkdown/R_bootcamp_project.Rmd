@@ -1,11 +1,11 @@
 ---
 title: "R Bootcamp Group Work"
 author: "Salome Isch, Adriana Ricklin"
-date: "10.9.2020"
+date: "10/2/2020"
 output: 
-  pdf_document:
-    number_sections: yes
-    toc: yes
+#  pdf_document:
+#    number_sections: yes
+#    toc: yes
   html_document:
     number_sections: yes
     toc: yes
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
 The following paper looks at the influence of the weather on the number of pedestrians and bikers in Zurich for 2019. More specifically, the focus lies on the place of Mythenquai. Mythenquai has been chosen ouf of the reason that both weather measurements as well as data regarding the number of pedestrians / bikers are collected at this very place. This means that there is as little discrepancy between the datasets as possible.
 
-Mythenquai is a section of road, directly next to Lake Zurich. The counting station for pedestrians and bikers is represented by the black pint in the middle of below red line:
+Mythenquai is a road section directly next to Lake Zurich. The counting station for pedestrians and bikers is represented by the black point in the middle of the red line in the picture below:
 
 ```{r pressure, echo = FALSE, fig.cap="Screenshot retrieved from https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen", out.width = '90%'}
 knitr::include_graphics("../01_data/Mythenquai.jpg")
@@ -54,13 +54,13 @@ FUSS_OUT   number of pedestrians, direction out
 OST        coordinate according to CH1903+ / LV95  
 NORD       coordinate according to CH1903+ / LV95  
   
-For computational reasons (as we experienced difficulties is the course of working on this paper as there are 9 variables with 1264678 observations in the original dataset), a preselection has been done for this data set in Excel. The altered dataset is named ""2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv". We selected the rows that have one of the following values in the first row: "ECO09113499", "U15G3104443" or "ECO07091438".
+For computational reasons (as we experienced difficulties in the course of working on this paper, as there were 9 variables with 1264678 observations in the original dataset), a preselection has been done for this data set in Excel. The altered dataset is named ""2019_verkehrszaehlungen_werte_fussgaenger_velo_bereinigt.csv". We selected the rows that have one of the following values in the first row: "ECO09113499", "U15G3104443" or "ECO07091438".
 
 Those are the keys for the counting station at Mythenquai according to the classification file retrieved from [https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen](https://www.stadt-zuerich.ch/geodaten/download/Standorte_der_automatischen_Fuss__und_Velozaehlungen).
 
     
 **Dataset 2**: messwerte_mythenquai_2007-2019.csv  
-This document shows various variables (air temperature, precipitation, ...) for Mythenquai. Data is collected by the Wasserschutzpolizei Zürich.  
+This document shows various variables (air temperature, precipitation, ...) for Mythenquai. The data is collected by the Wasserschutzpolizei Zürich.  
 
 *Source*: [https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv](https://data.stadt-zuerich.ch/dataset/69802b3a-bcae-4c28-8a1d-84295676e107/resource/8207b8b4-7993-447d-8a21-5987335aa7ef/download/messwerte_mythenquai_2007-2019.csv)
 
@@ -92,7 +92,7 @@ str(zaehlung)
 head(zaehlung)
 ```
 
-The head of our dataset indicates that the traffic counters did not work for both pedestrians and bikers but only specifically for one of each.
+The head of our dataset indicates that the traffic counting stations did not work for both pedestrians and bikers but only specifically for one of each.
 
 ```{r}
 #read in data weather
@@ -104,9 +104,9 @@ head(wetter)
 
 We thus categorise the counting stations accordingly and summarise the data into one shared column.
 
-As the traffic counters made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
+As the traffic counting stations made a difference whether one went from direction A to B or vice versa (x_IN <-> x_OUT), we take those numbers together as we are solely interested in the total number of pedestrians / bikers. These numbers are stored in the column "UNIDIR" which is an abbreviation for unidirectional.
 
-Third, we categorise the hour indications into categories of the same length (6 hour indications per factor) "morgen", "vormittag", "nachmittag" and "abend". 
+Third, we categorise the hour indications into categories of the same length (6 hour indications per factor) "morgen" (00:00 - 05:59), "vormittag" (06:00 - 11:59 o`clock), "nachmittag" (12:00 - 17:59 o`clock) and "abend" (18:00 - 23:59 o`clock). 
 
 
 ## Preparation of the datasets
@@ -130,11 +130,11 @@ zaehlung[, "IN"] <- zaehlung[4]+zaehlung[6]
 zaehlung[, "OUT"] <- zaehlung[5] + zaehlung[7]
 zaehlung[, "UNIDIR"] <- zaehlung[4] + zaehlung [5] + zaehlung[6] +  zaehlung[7]
 
-#new categorie for the time of day in intervals of 6 hours
+#new category for the time of day in intervals of 6 hours
 zaehlung[, "TAGESZEIT"] <-str_sub(zaehlung$DATUM, 12)
-zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "06"] <- "morgen"
-zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "12"] <- "vormittag"
-zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "18"] <- "nachmittag"
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "05"] <- "morgen"
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "11"] <- "vormittag"
+zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "17"] <- "nachmittag"
 zaehlung$TAGESZEIT[zaehlung$TAGESZEIT  <= "24"] <- "abend"
 zaehlung$TAGESZEIT <- as.factor(zaehlung$TAGESZEIT)
 ```
@@ -207,20 +207,20 @@ In the above step, we select to only focus on half a year (February to July). Th
 
 
 # Research question
-Does air temperature influence the number of pedestrians and bikers at Mythenquai in Zurich?
+Does air temperature influence the number of pedestrians and bikers counted at the counting station Mythenquai in Zurich?
 
 # Graphical Analysis
 
 We first take a look at the distribution of variables that are of interest to us separately. 
 
 ```{r}
-histogram(~ air_temperature, data=join_zaehlung_wetter, xlab = "Air temperature [°C]", main="Distribution of air temperature", breaks = 20)
+histogram(~ air_temperature, data=join_zaehlung_wetter, xlab = "Air temperature", main="Distribution of air temperature", breaks = 20)
 ```
 
-Air temperature does not occur uniformely distributed. This illustration shows that the air temperature follow approximately a normal distribution instead.
+Air temperature does not occur uniformely distributed. This illustration shows that the air temperature follows approximately a normal distribution instead.
 
 ```{r}
-histogram(~ join_zaehlung_wetter$UNIDIR, xlim = c(0,250), breaks = 250, xlab = "Counted number of pedestrians & bikers per hour", labels = TRUE, main="Distribution of the unidirectional count of pedestrians & bikers", col="orange")
+histogram(~ join_zaehlung_wetter$UNIDIR, xlim = c(0,250), breaks = 250, xlab = "UNIDIR", labels = TRUE, main="Distribution of the unidirectional count of pedestrians & bikers", col="orange")
 ```
 
 The above illustration indicates that the data follows approximately an 1/x function and would need a log-transformation in order to be approximately normal-distributed. However, this is at this point not required.
@@ -233,7 +233,7 @@ ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) +
   geom_point(alpha = 0.05, color="darkblue") + 
   ggtitle("Does air temperature affect the number of bikers and pedestrians?") + 
   xlab("Air temperature") + 
-  ylab("Total count of ped. + bikers") + 
+  ylab("UNIDIR") + 
   geom_smooth(method = "lm", colour = "red")
 ```
 
@@ -246,7 +246,7 @@ ggplot(join_zaehlung_wetter, aes(air_temperature, UNIDIR)) +
   geom_point(alpha = 0.05, color="darkblue") + 
   ggtitle("Does air temperature affect the number of bikers and pedestrians?") + 
   xlab("Air temperature") + 
-  ylab("Total count of ped. + bikers") + 
+  ylab("UNIDIR") + 
   ylim(c(0,250)) + 
   geom_smooth(method = "lm", colour = "red")
 ```
@@ -299,7 +299,7 @@ boxplot(UNIDIR ~ FK_ZAEHLER, ylim = c(0,250), data = join_zaehlung_wetter)
 ## running the test
 t.test(UNIDIR ~ FK_ZAEHLER, data = join_zaehlung_wetter)
 ```
-In the boxplot it can be seen, that the median of the count of bikers is slightly higher than the count of pedestrians.  
+In the boxplot it can be seen that the median of the count of bikers is slightly higher than the count of pedestrians. This is also shown in the t-test which indicates, that the true difference is not equal to zero as the p-value is very small.
 
 
 ```{r}
@@ -307,7 +307,7 @@ lm.join_zaehlung_wetter <- lm(UNIDIR ~ air_temperature, data = join_zaehlung_wet
 summary(lm.join_zaehlung_wetter)
 ```
 
-There is strong evidence, that the mean growth rate for air temperature is not eual to zero. If there is a count of zero pedestrians and bikers per hour, the temperature would be expected to be at 5.8 degrees.This does not make much sense, as there are other factors involved.
+There is strong evidence, that the mean growth rate for air temperature is not equal to zero. If the count increases by 1, the average air temperature would increase by 5.8 degrees. The intercept is outside of the data range, therefore the interpretation that by an air temperature of 5.8 degrees there is a count of -27.6 bikers and pedestrians makes not much sense as there is no negative count. 
 
 ```{r}
 join_zaehlung_wetter$predicted <- predict(lm.join_zaehlung_wetter)
@@ -396,7 +396,7 @@ rss.multiregression
 mse.multiregression
 rmse.multiregression
 ```
-
+Between the simple linear regression (72.24253) and the multiple linear regression (72.14376) is hardly any difference in the performance. 
 
 # Generalised Additive Model
 ```{r}
@@ -418,23 +418,25 @@ In comparison with the analysis of the residuals of the multiple regression (wit
 
 
 ```{r}
-plot.gam(gam.model1, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow")
+plot.gam(gam.model1, select = 1, rug = TRUE, shade = TRUE, shade.col = "yellow", residuals = TRUE, xlab = "Air temperaturee")
 ```
+
+With cross validation we almost get the same result.
 ```{r}
 #Cross validation for linear regression
-# Define training control
+
 set.seed(123) 
-train.control <- trainControl(method = "cv", number = 10)
+lin.train.control <- trainControl(method = "cv", number = 10)
 gam.train.control <- trainControl(method = "cv", number = 10)
-# Train the model
+
 #Cross validation for linear regression
-cv.model <- train(UNIDIR ~ air_temperature, data = join_zaehlung_wetter, method = "lm",
-               trControl = train.control)
+cv.lin.model <- train(UNIDIR ~ air_temperature, data = join_zaehlung_wetter, method = "lm",
+               trControl = lin.train.control)
 #cross validation for gam model
-cv.gam.model <- train(UNIDIR ~ air_temperature + precipitation, data = join_zaehlung_wetter, method = "gam",
+cv.gam.model <- train(UNIDIR ~ precipitation + air_temperature, data = join_zaehlung_wetter, method = "gam",
                 trControl = gam.train.control)
 # Summarize the results
-print(cv.model)
+print(cv.lin.model)
 print(cv.gam.model)
 ```
 
@@ -451,4 +453,4 @@ These analysis are very reliant on the quality of the data, meaning how the data
 
 What neither is considered in this paper are the effects of like air temperature or precipiation on other factors such as if streets have become icy.
 
-Such questions would surely be interesting to be analysed in a further paper. One could also specially take into account days, where there are big days in Zurich like Street Parade. 
+Such questions would surely be interesting to be analysed in a further paper. One could also specially take into account days where there is a high traffic of pedestrians and bikers like for example the Street Parade in Zurich.  
